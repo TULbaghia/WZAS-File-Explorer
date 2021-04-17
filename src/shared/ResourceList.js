@@ -1,0 +1,103 @@
+import React, {useState} from 'react';
+import {makeStyles} from '@material-ui/core/styles';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import ListItemText from '@material-ui/core/ListItemText';
+import Avatar from '@material-ui/core/Avatar';
+import IconButton from '@material-ui/core/IconButton';
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
+import FolderIcon from '@material-ui/icons/Folder';
+import DeleteIcon from '@material-ui/icons/Delete';
+import {AttachFile} from "@material-ui/icons";
+import FileHandler from "../components/FileHandler";
+
+const useStyles = makeStyles((theme) => ({
+    root: {
+        flexGrow: 1,
+        maxWidth: 752,
+    },
+    demo: {
+        backgroundColor: theme.palette.background.paper,
+    },
+    title: {
+        margin: theme.spacing(4, 0, 2),
+    },
+}));
+
+export default function ResourceList(props) {
+    const classes = useStyles();
+
+    const [content, setContent] = useState({});
+
+    const generateFiles = (element) => {
+        let i = 0;
+        return element.map((value) => {
+                return (
+                    <ListItem key={i++} onClick={() => setContent(value)}>
+                        <ListItemAvatar>
+                            <Avatar>
+                                <AttachFile/>
+                            </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText primary={value.name}/>
+                        <ListItemSecondaryAction>
+                            <IconButton edge="end" aria-label="delete">
+                                <DeleteIcon/>
+                            </IconButton>
+                        </ListItemSecondaryAction>
+                    </ListItem>
+                )
+            }
+        );
+    }
+
+    const generateDirs = (element) => {
+        let i = 0;
+        return element.map((value) => {
+                return (
+                    <ListItem key={i++}>
+                        <ListItemAvatar>
+                            <Avatar>
+                                <FolderIcon/>
+                            </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText primary={value.name}/>
+                        <ListItemSecondaryAction>
+                            <IconButton edge="end" aria-label="delete">
+                                <DeleteIcon/>
+                            </IconButton>
+                        </ListItemSecondaryAction>
+                    </ListItem>
+                )
+            }
+        );
+    }
+
+    return (
+        <div className={classes.root}>
+            <Grid container spacing={2}>
+                <Grid item xs={12} md={6}>
+                    <Typography variant="h6" className={classes.title}>Directories</Typography>
+                    <div className={classes.demo}>
+                        <List dense={false}>
+                            {props.dirs ? generateDirs(props.dirs) : ""}
+                        </List>
+                    </div>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                    <Typography variant="h6" className={classes.title}>Files</Typography>
+                    <div className={classes.demo}>
+                        <List dense={false}>
+                            {props.files ? generateFiles(props.files) : ""}
+                        </List>
+                    </div>
+                </Grid>
+            </Grid>
+            {Object.keys(content).length ? <FileHandler data={content}/> : ""}
+         </div>
+    );
+}
