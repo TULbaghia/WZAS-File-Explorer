@@ -1,19 +1,17 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import FolderIcon from '@material-ui/icons/Folder';
 import DeleteIcon from '@material-ui/icons/Delete';
-import {AttachFile} from "@material-ui/icons";
-import FileHandler from "../components/FileHandler";
+import FolderIcon from '@material-ui/icons/Folder';
+import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -31,38 +29,14 @@ const useStyles = makeStyles((theme) => ({
 export default function ResourceList(props) {
     const classes = useStyles();
 
-    const [content, setContent] = useState({});
-
-    const generateFiles = (element) => {
+    const generate = (element) => {
         let i = 0;
         return element.map((value) => {
                 return (
-                    <ListItem key={i++} onClick={() => setContent(value)}>
+                    <ListItem key={i++} onClick={() => props.event(value.handle)}>
                         <ListItemAvatar>
                             <Avatar>
-                                <AttachFile/>
-                            </Avatar>
-                        </ListItemAvatar>
-                        <ListItemText primary={value.name}/>
-                        <ListItemSecondaryAction>
-                            <IconButton edge="end" aria-label="delete">
-                                <DeleteIcon/>
-                            </IconButton>
-                        </ListItemSecondaryAction>
-                    </ListItem>
-                )
-            }
-        );
-    }
-
-    const generateDirs = (element) => {
-        let i = 0;
-        return element.map((value) => {
-                return (
-                    <ListItem key={i++}>
-                        <ListItemAvatar>
-                            <Avatar>
-                                <FolderIcon/>
+                                {value.kind === "directory" ? <FolderIcon /> : <InsertDriveFileIcon />}
                             </Avatar>
                         </ListItemAvatar>
                         <ListItemText primary={value.name}/>
@@ -79,25 +53,13 @@ export default function ResourceList(props) {
 
     return (
         <div className={classes.root}>
-            <Grid container spacing={2}>
-                <Grid item xs={12} md={6}>
-                    <Typography variant="h6" className={classes.title}>Directories</Typography>
-                    <div className={classes.demo}>
-                        <List dense={false}>
-                            {props.dirs ? generateDirs(props.dirs) : ""}
-                        </List>
-                    </div>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                    <Typography variant="h6" className={classes.title}>Files</Typography>
-                    <div className={classes.demo}>
-                        <List dense={false}>
-                            {props.files ? generateFiles(props.files) : ""}
-                        </List>
-                    </div>
-                </Grid>
+            <Grid item xs={12} md={6}>
+                <div className={classes.demo}>
+                    <List dense={false}>
+                        {props.entries ? generate(props.entries) : ""}
+                    </List>
+                </div>
             </Grid>
-            {Object.keys(content).length ? <FileHandler data={content}/> : ""}
          </div>
     );
 }

@@ -1,23 +1,15 @@
-import React, {Component} from 'react';
+import React, {useEffect, useState} from 'react';
 import ResourceList from "../shared/ResourceList";
+import Typography from "@material-ui/core/Typography";
 
-class WalkDir extends Component {
+function WalkDir(props) {
+    const [dir, setDir] = useState({files: [], dirs: []})
 
-    constructor(props) {
-        super(props);
-        this.dirHandle = props.dirHandle;
-
-        this.state = {
-            dirs: [],
-            files: [],
-        }
-    }
-
-    async scanDirectory() {
+    const scanDirectory = async () => {
         const files = [];
         const dirs = [];
 
-        for await (let [name, handle] of this.dirHandle) {
+        for await (let [name, handle] of props.dir) {
             const {kind} = handle;
             if (kind === 'directory') {
                 dirs.push({name, handle, kind});
@@ -26,29 +18,26 @@ class WalkDir extends Component {
             }
         }
 
-        return {
-            files: files,
-            dirs: dirs,
-        }
+        setDir({files: files, dirs: dirs});
     }
 
-    componentDidMount() {
-        this.scanDirectory().then((entries) => {
-            this.setState({
-                dirs: entries.dirs,
-                files: entries.files,
-            })
-        });
-    }
+    useEffect(() => {
+        scanDirectory().then(() => {});
+    })
 
-    render() {
-        return (
-            <>
-                {this.state.dirs || this.state.files ?
-                    <ResourceList dirs={this.state.dirs} files={this.state.files}/> : ""}
-            </>
-        );
-    }
+    return (
+        <>
+            <section>
+                <Typography>Directory</Typography>
+                <ResourceList event={props.pushStack} entries={dir.dirs}/>
+            </section>
+            <section>
+                <Typography>Files</Typography>
+                <ResourceList event={props.addFile} entries={dir.files}/>
+            </section>
+        </>
+
+    );
 }
 
 export default WalkDir;

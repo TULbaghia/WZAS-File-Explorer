@@ -8,21 +8,21 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 
 export default function AlertDialog(props) {
     const handleClose = () => {
-        props.setState(false);
+        props.setState({...props.alertDialog, active: false});
     };
 
     return (
         <div>
             <Dialog
-                open={props.open}
+                open={props.alertDialog.active}
                 onClose={handleClose}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
             >
-                <DialogTitle id="alert-dialog-title">{props.title}</DialogTitle>
+                <DialogTitle id="alert-dialog-title">{props.alertDialog.title}</DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        {props.text}
+                        {props.alertDialog.text}
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
