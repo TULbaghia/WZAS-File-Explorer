@@ -1,49 +1,44 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from "react";
 import CommonHandler from "./handlerType/CommonHandler";
 import AudioHandler from "./handlerType/AudioHandler";
-
+import VideoHandler from "./handlerType/VideoHandler";
 
 function FileHandler(props) {
-    const [file, setFile] = useState({})
+  const [file, setFile] = useState({});
 
-    const handleFile = () => {
-        props.data.getFile().then(file => setFile(file));
+  const handleFile = () => {
+    props.data.getFile().then((file) => setFile(file));
+  };
+
+  useEffect(() => {
+    let mounted = true;
+
+    props.data.getFile().then((file) => {
+      if (mounted) {
+        setFile(file);
+      }
+    });
+
+    return function cleanup() {
+      mounted = false;
+    };
+  }, []);
+
+  const renderFile = () => {
+    if (file.type || file.type === "") {
+      if (file.type === "" && file.name.endsWith(".pptx")) {
+        return "PPTX";
+      } else if (file.type === "audio/mpeg") {
+        return <AudioHandler file={file} />;
+      } else if (file.type === "video/mp4") {
+        return <VideoHandler file={file} />;
+      } else {
+        return <CommonHandler file={file} />;
+      }
     }
+  };
 
-    useEffect(() => {
-        let mounted = true;
-
-        props.data.getFile().then((file) => {
-            if (mounted) {
-                setFile(file);
-            }
-        });
-
-        return function cleanup() {
-            mounted = false;
-        }
-    }, [])
-
-
-    const renderFile = () => {
-        if (file.type || file.type === "") {
-            if (file.type === "" && file.name.endsWith(".pptx")) {
-                return "PPTX"
-            } else if (file.type === "audio/mpeg") {
-                return <AudioHandler file={file}/>
-            } else if (file.type === "video/mp4") {
-                return "Video"
-            } else {
-                return <CommonHandler file={file}/>
-            }
-        }
-    }
-
-    return (
-        <>
-            {renderFile()}
-        </>
-    );
+  return <>{renderFile()}</>;
 }
 
 export default FileHandler;
