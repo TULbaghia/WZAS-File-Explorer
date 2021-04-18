@@ -1,5 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import CommonHandler from "./handlerType/CommonHandler";
+import AudioHandler from "./handlerType/AudioHandler";
+
 
 function FileHandler(props) {
     const [file, setFile] = useState({})
@@ -27,6 +29,8 @@ function FileHandler(props) {
         if (file.type || file.type === "") {
             if (file.type === "" && file.name.endsWith(".pptx")) {
                 return "PPTX"
+            } else if (file.type === "audio/mpeg") {
+                return <AudioHandler file={file}/>
             } else if (file.type === "video/mp4") {
                 return "Video"
             } else {
