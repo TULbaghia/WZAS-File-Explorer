@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import CommonHandler from "./handlerType/CommonHandler";
 import AudioHandler from "./handlerType/AudioHandler";
-import VideoHandler from "./handlerType/VideoHandler";
+import VideoHandler from "./handlerType/VideoHandler/VideoHandler";
 
 function FileHandler(props) {
   const [file, setFile] = useState({});
