@@ -28,6 +28,8 @@ const format = (seconds) => {
   return `${mm}:${ss}`;
 };
 
+let count = 0;
+
 function VideoHandler(props) {
   const classes = useStyles();
   const [state, setState] = useState({
@@ -45,6 +47,7 @@ function VideoHandler(props) {
 
   const playerRef = useRef(null);
   const playerContainerRef = useRef(null);
+  const controlsRef = useRef(null);
 
   const handlePlayPause = () => {
     setState({ ...state, playing: !state.playing });
@@ -89,6 +92,15 @@ function VideoHandler(props) {
   const handleProgress = (changeState) => {
     console.log(changeState);
 
+    if (count > 0) {
+      controlsRef.current.style.visibility = "hidden";
+      count = 0;
+    }
+
+    if (controlsRef.current.style.visibility == "visible") {
+      count += 1;
+    }
+
     if (!state.seeking) {
       setState({ ...state, ...changeState });
     }
@@ -111,6 +123,11 @@ function VideoHandler(props) {
     setTimeDisplayFormat(
       timeDisplayFormat === "normal" ? "remaining" : "normal"
     );
+  };
+
+  const handleMouseMove = () => {
+    controlsRef.current.style.visibility = "visible";
+    count = 0;
   };
 
   const currentTime = playerRef.current
@@ -148,7 +165,11 @@ function VideoHandler(props) {
 
   return (
     <Container maxWidth="md">
-      <div ref={playerContainerRef} className={classes.playerWrapper}>
+      <div
+        ref={playerContainerRef}
+        className={classes.playerWrapper}
+        onMouseMove={handleMouseMove}
+      >
         <ReactPlayer
           ref={playerRef}
           width={"100%"}
@@ -161,6 +182,7 @@ function VideoHandler(props) {
           onProgress={handleProgress}
         />
         <PlayerControls
+          ref={controlsRef}
           fileName={props.file.name}
           onPlayPause={handlePlayPause}
           playing={playing}
