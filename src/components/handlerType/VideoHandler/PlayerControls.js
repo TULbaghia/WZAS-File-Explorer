@@ -97,10 +97,18 @@ export default ({
   muted,
   onMute,
   onVolumeChange,
-  onVolumeSeekDown,
+  onVolumeSeekUp,
   volume,
   playbackRate,
   onPlaybackRateChange,
+  onToggleFullScreen,
+  played,
+  onSeek,
+  onSeekMouseDown,
+  onSeekMouseUp,
+  elapsedTime,
+  totalDuration,
+  onChangeDisplayFormat,
 }) => {
   const classes = useStyles();
 
@@ -176,8 +184,13 @@ export default ({
           <PrettoSlider
             min={0}
             max={100}
-            defaultValue={20}
-            ValueLabelComponent={ValueLabelComponent}
+            value={played * 100}
+            ValueLabelComponent={(props) => (
+              <ValueLabelComponent {...props} value={elapsedTime} />
+            )}
+            onChange={onSeek}
+            onMouseDown={onSeekMouseDown}
+            onChangeCommitted={onSeekMouseUp}
           />
         </Grid>
 
@@ -205,10 +218,16 @@ export default ({
               max={100}
               value={volume * 100}
               onChange={onVolumeChange}
-              onChangeCommitted={onVolumeSeekDown}
+              onChangeCommitted={onVolumeSeekUp}
             />
-            <Button variant="text" style={{ color: "#fff", marginLeft: 16 }}>
-              <Typography>05:05</Typography>
+            <Button
+              onClick={onChangeDisplayFormat}
+              variant="text"
+              style={{ color: "#fff", marginLeft: 16 }}
+            >
+              <Typography>
+                {elapsedTime}/{totalDuration}
+              </Typography>
             </Button>
           </Grid>
         </Grid>
@@ -251,7 +270,10 @@ export default ({
             </Grid>
           </Popover>
 
-          <IconButton className={classes.bottomIcons}>
+          <IconButton
+            onClick={onToggleFullScreen}
+            className={classes.bottomIcons}
+          >
             <FullScreenIcon fontSize="medium" />
           </IconButton>
         </Grid>

@@ -3,6 +3,7 @@ import Container from "@material-ui/core/Container";
 import ReactPlayer from "react-player";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import PlayerControls from "./PlayerControls";
+import screenfull from "screenfull";
 
 const useStyles = makeStyles({
   playerWrapper: {
@@ -11,6 +12,22 @@ const useStyles = makeStyles({
   },
 });
 
+const format = (seconds) => {
+  if (isNaN(seconds)) {
+    return "00:00";
+  }
+
+  const date = new Date(seconds * 1000);
+  const hh = date.getUTCHours();
+  const mm = date.getUTCMinutes();
+  const ss = date.getUTCSeconds().toString().padStart(2, "0");
+
+  if (hh) {
+    return `${hh}:${mm.toString().padStart(2, "0")}}:${ss}`;
+  }
+  return `${mm}:${ss}`;
+};
+
 function VideoHandler(props) {
   const classes = useStyles();
   const [state, setState] = useState({
@@ -18,11 +35,17 @@ function VideoHandler(props) {
     muted: true,
     volume: 0.5,
     playbackRate: 1.0,
+    played: 0,
+    seeking: false,
   });
 
-  const { playing, muted, volume, playbackRate } = state;
+  const [timeDisplayFormat, setTimeDisplayFormat] = useState("normal");
+
+  const { playing, muted, volume, playbackRate, played, seeking } = state;
 
   const playerRef = useRef(null);
+  const playerContainerRef = useRef(null);
+
   const handlePlayPause = () => {
     setState({ ...state, playing: !state.playing });
   };
@@ -47,7 +70,7 @@ function VideoHandler(props) {
     });
   };
 
-  const handleVolumeSeekDown = (e, newValue) => {
+  const handleVolumeSeekUp = (e, newValue) => {
     setState({
       ...state,
       volume: parseFloat(newValue / 100),
@@ -58,6 +81,50 @@ function VideoHandler(props) {
   const handlePlaybackRateChange = (rate) => {
     setState({ ...state, playbackRate: rate });
   };
+
+  const toggleFullScreen = () => {
+    screenfull.toggle(playerContainerRef.current);
+  };
+
+  const handleProgress = (changeState) => {
+    console.log(changeState);
+
+    if (!state.seeking) {
+      setState({ ...state, ...changeState });
+    }
+  };
+
+  const handleSeekChange = (e, newValue) => {
+    setState({ ...state, played: parseFloat(newValue / 100) });
+  };
+
+  const handleSeekMouseDown = (e) => {
+    setState({ ...state, seeking: true });
+  };
+
+  const handleSeekMouseUp = (e, newValue) => {
+    setState({ ...state, seeking: false });
+    playerRef.current.seekTo(newValue / 100);
+  };
+
+  const handleChangeDisplayFormat = () => {
+    setTimeDisplayFormat(
+      timeDisplayFormat === "normal" ? "remaining" : "normal"
+    );
+  };
+
+  const currentTime = playerRef.current
+    ? playerRef.current.getCurrentTime()
+    : "00:00";
+  const duration = playerRef.current
+    ? playerRef.current.getDuration()
+    : "00:00";
+
+  const elapsedTime =
+    timeDisplayFormat === "normal"
+      ? format(currentTime)
+      : `-${format(duration - currentTime)}`;
+  const totalDuration = format(duration);
 
   const [dataUrl, setDataUrl] = useState({ data: "" });
 
@@ -81,7 +148,7 @@ function VideoHandler(props) {
 
   return (
     <Container maxWidth="md">
-      <div className={classes.playerWrapper}>
+      <div ref={playerContainerRef} className={classes.playerWrapper}>
         <ReactPlayer
           ref={playerRef}
           width={"100%"}
@@ -91,6 +158,7 @@ function VideoHandler(props) {
           playing={playing}
           volume={volume}
           playbackRate={playbackRate}
+          onProgress={handleProgress}
         />
         <PlayerControls
           fileName={props.file.name}
@@ -101,10 +169,18 @@ function VideoHandler(props) {
           muted={muted}
           onMute={handleMute}
           onVolumeChange={handleVolumeChange}
-          onVolumeSeekDown={handleVolumeSeekDown}
+          onVolumeSeekUp={handleVolumeSeekUp}
           volume={volume}
           playbackRate={playbackRate}
           onPlaybackRateChange={handlePlaybackRateChange}
+          onToggleFullScreen={toggleFullScreen}
+          played={played}
+          onSeek={handleSeekChange}
+          onSeekMouseDown={handleSeekMouseDown}
+          onSeekMouseUp={handleSeekMouseUp}
+          elapsedTime={elapsedTime}
+          totalDuration={totalDuration}
+          onChangeDisplayFormat={handleChangeDisplayFormat}
         />
       </div>
     </Container>
