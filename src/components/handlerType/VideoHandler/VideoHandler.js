@@ -1,19 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Container from "@material-ui/core/Container";
 import ReactPlayer from "react-player";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
-import { Button, Slide, Typography } from "@material-ui/core";
-import IconButton from "@material-ui/core/IconButton";
-import FastRewindIcon from "@material-ui/icons/FastRewind";
-import FastForwardIcon from "@material-ui/icons/FastForward";
-import PlayArrowIcon from "@material-ui/icons/PlayArrow";
-import PauseIcon from "@material-ui/icons/Pause";
-import Slider from "@material-ui/core/Slider";
-import Tooltip from "@material-ui/core/Tooltip";
-import VolumeUpIcon from "@material-ui/icons/VolumeUp";
-import FullScreenIcon from "@material-ui/icons/Fullscreen";
-import Popover from "@material-ui/core/Popover";
 import PlayerControls from "./PlayerControls";
 
 const useStyles = makeStyles({
@@ -25,6 +13,52 @@ const useStyles = makeStyles({
 
 function VideoHandler(props) {
   const classes = useStyles();
+  const [state, setState] = useState({
+    playing: true,
+    muted: true,
+    volume: 0.5,
+    playbackRate: 1.0,
+  });
+
+  const { playing, muted, volume, playbackRate } = state;
+
+  const playerRef = useRef(null);
+  const handlePlayPause = () => {
+    setState({ ...state, playing: !state.playing });
+  };
+
+  const handleRewind = () => {
+    playerRef.current.seekTo(playerRef.current.getCurrentTime() - 10);
+  };
+
+  const handleFastForward = () => {
+    playerRef.current.seekTo(playerRef.current.getCurrentTime() + 10);
+  };
+
+  const handleMute = () => {
+    setState({ ...state, muted: !state.muted });
+  };
+
+  const handleVolumeChange = (e, newValue) => {
+    setState({
+      ...state,
+      volume: parseFloat(newValue / 100),
+      muted: newValue === 0 ? true : false,
+    });
+  };
+
+  const handleVolumeSeekDown = (e, newValue) => {
+    setState({
+      ...state,
+      volume: parseFloat(newValue / 100),
+      muted: newValue === 0 ? true : false,
+    });
+  };
+
+  const handlePlaybackRateChange = (rate) => {
+    setState({ ...state, playbackRate: rate });
+  };
+
   const [dataUrl, setDataUrl] = useState({ data: "" });
 
   useEffect(() => {
@@ -49,13 +83,29 @@ function VideoHandler(props) {
     <Container maxWidth="md">
       <div className={classes.playerWrapper}>
         <ReactPlayer
+          ref={playerRef}
           width={"100%"}
           height={"100%"}
           url={dataUrl.data}
-          muted={false}
-          playing={true}
+          muted={muted}
+          playing={playing}
+          volume={volume}
+          playbackRate={playbackRate}
         />
-        <PlayerControls fileName={props.file.name} />
+        <PlayerControls
+          fileName={props.file.name}
+          onPlayPause={handlePlayPause}
+          playing={playing}
+          onRewind={handleRewind}
+          onFastForward={handleFastForward}
+          muted={muted}
+          onMute={handleMute}
+          onVolumeChange={handleVolumeChange}
+          onVolumeSeekDown={handleVolumeSeekDown}
+          volume={volume}
+          playbackRate={playbackRate}
+          onPlaybackRateChange={handlePlaybackRateChange}
+        />
       </div>
     </Container>
   );
