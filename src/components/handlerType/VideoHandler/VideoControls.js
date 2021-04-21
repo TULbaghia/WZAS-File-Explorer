@@ -87,7 +87,7 @@ const PrettoSlider = withStyles({
     borderRadius: 4,
   },
 })(Slider);
-// ---------------------------------------------------------------------------------------------------------------------
+
 export default forwardRef(
   (
     {
@@ -139,7 +139,7 @@ export default forwardRef(
           style={{ padding: 8 }}
         >
           <Grid item>
-            <Typography variant="h7" style={{ color: "#fff" }}>
+            <Typography variant="h5" style={{ color: "#fff" }}>
               {fileName}
             </Typography>
           </Grid>

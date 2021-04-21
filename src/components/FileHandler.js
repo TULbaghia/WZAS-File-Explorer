@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CommonHandler from "./handlerType/CommonHandler";
-import AudioHandler from "./handlerType/AudioHandler";
+import AudioHandler from "./handlerType/AudioHandler/AudioHandler";
 import VideoHandler from "./handlerType/VideoHandler/VideoHandler";
 
 function FileHandler(props) {

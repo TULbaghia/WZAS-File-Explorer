@@ -1,13 +1,14 @@
 import React, { useEffect, useState, useRef } from "react";
 import Container from "@material-ui/core/Container";
-import ReactPlayer from "react-player";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
-import VideoControls from "./VideoControls";
-import screenfull from "screenfull";
+import AudioControls from "./AudioControls";
+import ReactPlayer from "react-player";
 
 const useStyles = makeStyles({
   playerWrapper: {
+    height: "220px",
     width: "100%",
+    background: "rgba(189, 189, 189, 1)",
     position: "relative",
   },
 });
@@ -28,9 +29,7 @@ const format = (seconds) => {
   return `${mm}:${ss}`;
 };
 
-let count = 0;
-
-function VideoHandler(props) {
+function AudioHandler(props) {
   const classes = useStyles();
   const [dataUrl, setDataUrl] = useState({ data: "" });
   const [state, setState] = useState({
@@ -46,20 +45,15 @@ function VideoHandler(props) {
 
   const { playing, muted, volume, playbackRate, played, seeking } = state;
 
-  const playerRef = useRef(null);
-  const playerContainerRef = useRef(null);
+  const audioRef = useRef(null);
   const controlsRef = useRef(null);
 
-  const handlePlayPause = () => {
-    setState({ ...state, playing: !state.playing });
-  };
-
   const handleRewind = () => {
-    playerRef.current.seekTo(playerRef.current.getCurrentTime() - 10);
+    audioRef.current.seekTo(audioRef.current.getCurrentTime() - 10);
   };
 
   const handleFastForward = () => {
-    playerRef.current.seekTo(playerRef.current.getCurrentTime() + 10);
+    audioRef.current.seekTo(audioRef.current.getCurrentTime() + 10);
   };
 
   const handleMute = () => {
@@ -86,58 +80,20 @@ function VideoHandler(props) {
     setState({ ...state, playbackRate: rate });
   };
 
-  const toggleFullScreen = () => {
-    screenfull.toggle(playerContainerRef.current);
-  };
-
-  const handleProgress = (changeState) => {
-    console.log(changeState);
-
-    if (count > 0) {
-      controlsRef.current.style.visibility = "hidden";
-      count = 0;
-    }
-
-    if (controlsRef.current.style.visibility == "visible") {
-      count += 1;
-    }
-
-    if (!seeking) {
-      setState({ ...state, ...changeState });
-    }
-  };
-
-  const handleSeekChange = (e, newValue) => {
-    setState({ ...state, played: parseFloat(newValue / 100) });
-  };
-
   const handleSeekMouseDown = (e) => {
     setState({ ...state, seeking: true });
   };
 
   const handleSeekMouseUp = (e, newValue) => {
     setState({ ...state, seeking: false });
-    playerRef.current.seekTo(newValue / 100);
+    audioRef.current.seekTo(newValue / 100);
   };
 
-  const handleChangeDisplayFormat = () => {
-    setTimeDisplayFormat(
-      timeDisplayFormat === "normal" ? "remaining" : "normal"
-    );
-  };
-
-  const handleMouseMove = () => {
-    controlsRef.current.style.visibility = "visible";
-    count = 0;
-  };
-
-  const currentTime = playerRef.current
-    ? playerRef.current.getCurrentTime()
+  const currentTime = audioRef.current
+    ? audioRef.current.getCurrentTime()
     : "00:00";
 
-  const duration = playerRef.current
-    ? playerRef.current.getDuration()
-    : "00:00";
+  const duration = audioRef.current ? audioRef.current.getDuration() : "00:00";
 
   const elapsedTime =
     timeDisplayFormat === "normal"
@@ -164,25 +120,44 @@ function VideoHandler(props) {
     };
   }, []);
 
+  const handleChangeDisplayFormat = () => {
+    setTimeDisplayFormat(
+      timeDisplayFormat === "normal" ? "remaining" : "normal"
+    );
+  };
+
+  const handleSeekChange = (e, newValue) => {
+    setState({ ...state, played: parseFloat(newValue / 100) });
+  };
+
+  const handlePlayPause = () => {
+    setState({ ...state, playing: !state.playing });
+  };
+
+  const handleProgress = (changeState) => {
+    console.log(changeState);
+
+    if (!seeking) {
+      setState({ ...state, ...changeState });
+    }
+  };
+
   return (
     <Container maxWidth="md">
-      <div
-        ref={playerContainerRef}
-        className={classes.playerWrapper}
-        onMouseMove={handleMouseMove}
-      >
+      <div className={classes.playerWrapper}>
         <ReactPlayer
-          ref={playerRef}
           width={"100%"}
           height={"100%"}
-          url={dataUrl.data}
+          ref={audioRef}
           muted={muted}
           playing={playing}
           volume={volume}
           playbackRate={playbackRate}
+          url={dataUrl.data}
+          autoPlay="true"
           onProgress={handleProgress}
         />
-        <VideoControls
+        <AudioControls
           ref={controlsRef}
           fileName={props.file.name}
           onPlayPause={handlePlayPause}
@@ -196,7 +171,6 @@ function VideoHandler(props) {
           volume={volume}
           playbackRate={playbackRate}
           onPlaybackRateChange={handlePlaybackRateChange}
-          onToggleFullScreen={toggleFullScreen}
           played={played}
           onSeek={handleSeekChange}
           onSeekMouseDown={handleSeekMouseDown}
@@ -210,4 +184,4 @@ function VideoHandler(props) {
   );
 }
 
-export default VideoHandler;
+export default AudioHandler;
