@@ -29,11 +29,11 @@ function WalkDir(props) {
         <>
             <section>
                 <Typography>Directory</Typography>
-                <ResourceList event={props.pushStack} entries={dir.dirs}/>
+                <ResourceList event={props.pushStack} entries={dir.dirs} dir={props.dir}/>
             </section>
             <section>
                 <Typography>Files</Typography>
-                <ResourceList event={props.addFile} entries={dir.files}/>
+                <ResourceList event={props.addFile} entries={dir.files} dir={props.dir}/>
             </section>
         </>
 

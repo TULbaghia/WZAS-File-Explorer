@@ -29,6 +29,10 @@ const useStyles = makeStyles((theme) => ({
 export default function ResourceList(props) {
     const classes = useStyles();
 
+    const removeEntry = (handle, dirHandle) => {
+        dirHandle.removeEntry(handle.name, { recursive: true }).then();
+    }
+
     const generate = (element) => {
         let i = 0;
         return element.map((value) => {
@@ -42,7 +46,7 @@ export default function ResourceList(props) {
                         <ListItemText primary={value.name}/>
                         <ListItemSecondaryAction>
                             <IconButton edge="end" aria-label="delete">
-                                <DeleteIcon/>
+                                <DeleteIcon onClick={() => removeEntry(value.handle, props.dir)}/>
                             </IconButton>
                         </ListItemSecondaryAction>
                     </ListItem>
