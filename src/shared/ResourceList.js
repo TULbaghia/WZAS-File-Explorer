@@ -12,6 +12,7 @@ import Typography from '@material-ui/core/Typography';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FolderIcon from '@material-ui/icons/Folder';
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
+import PromptDialog from "./PromptDialog";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -27,10 +28,18 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function ResourceList(props) {
+    const [open, setOpen] = React.useState({open: false, handle: undefined, dirHandle: undefined});
+
     const classes = useStyles();
 
     const removeEntry = (handle, dirHandle) => {
-        dirHandle.removeEntry(handle.name, { recursive: true }).then();
+        dirHandle.removeEntry(handle.name, { recursive: true }).then(() => {
+            setOpen({...open, open: false, handle: undefined, dirHandle: undefined})
+        });
+    }
+
+    const handleDelete = (handle, dirHandle) => {
+        setOpen({...open, open: true, handle: handle, dirHandle: dirHandle});
     }
 
     const generate = (element) => {
@@ -45,8 +54,8 @@ export default function ResourceList(props) {
                         </ListItemAvatar>
                         <ListItemText primary={value.name}/>
                         <ListItemSecondaryAction>
-                            <IconButton edge="end" aria-label="delete">
-                                <DeleteIcon onClick={() => removeEntry(value.handle, props.dir)}/>
+                            <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(value.handle, props.dir)}>
+                                <DeleteIcon/>
                             </IconButton>
                         </ListItemSecondaryAction>
                     </ListItem>
@@ -64,6 +73,7 @@ export default function ResourceList(props) {
                     </List>
                 </div>
             </Grid>
+            <PromptDialog open={open} setOpen={setOpen} onOkEvent={removeEntry} />
          </div>
     );
 }
