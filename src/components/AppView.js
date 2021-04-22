@@ -24,8 +24,9 @@ function AppView(props) {
                 {/*open*/}
             </header>
             <main>
-                <WalkDir addFile={addFile} pushStack={props.pushStack} dir={lastDirStack()}/>
-                <FileView fileList={props.fileList}/>
+                <WalkDir addFile={addFile} pushStack={props.pushStack} dir={lastDirStack()}
+                         setFileList={props.setFileList} fileList={props.fileList}/>
+                <FileView fileList={props.fileList} setFileList={props.setFileList}/>
             </main>
             <footer>
                 {/*nextTrack*/}
