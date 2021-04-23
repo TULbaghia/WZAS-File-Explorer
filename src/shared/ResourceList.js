@@ -90,7 +90,7 @@ export default function ResourceList(props) {
                     </List>
                 </div>
             </Grid>
-            <PromptDialog open={open} setOpen={setOpen} onOkEvent={removeEntry} />
+            {open.open ? <PromptDialog open={open} setOpen={setOpen} onOkEvent={removeEntry} /> : ""}
          </div>
     );
 }

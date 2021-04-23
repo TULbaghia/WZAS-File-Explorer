@@ -77,7 +77,7 @@ export default function FileView(props) {
                     aria-label="scrollable auto tabs example"
                 >
                     {props.fileList.map((x, i) =>
-                        <Tab key={i} label={x.name} value={value} icon={
+                        <Tab key={i} label={x.name} icon={
                             <CancelRoundedIcon onClick={() => handleFileClose(x)}/>
                         } {...a11yProps(i)}/>
                     )}
