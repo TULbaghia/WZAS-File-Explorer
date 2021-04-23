@@ -7,6 +7,7 @@ import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import FileHandler from "./FileHandler";
+import CancelRoundedIcon from '@material-ui/icons/CancelRounded';
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -57,6 +58,12 @@ export default function FileView(props) {
         setValue(newValue);
     };
 
+    const handleFileClose = (file) => {
+        let list = Array.from(props.fileList);
+        let filteredList = list.filter(x => x !== file);
+        props.setFileList(filteredList);
+    }
+
     return (
         <div className={classes.root}>
             <AppBar position="static" color="default">
@@ -70,7 +77,9 @@ export default function FileView(props) {
                     aria-label="scrollable auto tabs example"
                 >
                     {props.fileList.map((x, i) =>
-                        <Tab key={i} label={x.name} {...a11yProps(i)} />
+                        <Tab key={i} label={x.name} icon={
+                            <CancelRoundedIcon onClick={() => handleFileClose(x)}/>
+                        } {...a11yProps(i)}/>
                     )}
                 </Tabs>
             </AppBar>

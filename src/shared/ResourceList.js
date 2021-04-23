@@ -8,7 +8,6 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FolderIcon from '@material-ui/icons/Folder';
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
@@ -32,8 +31,26 @@ export default function ResourceList(props) {
 
     const classes = useStyles();
 
+    const filterList = async (handle, fileList) => {
+        async function filter(arr, callback) {
+            const fail = Symbol()
+            return (await Promise.all(arr.map(async item => (await callback(item)) ? item : fail))).filter(i=>i!==fail)
+        }
+
+        let list = Array.from(fileList);
+        const results = await filter(list, async x => {
+            let result = false;
+            await x.isSameEntry(handle).then((b) => result = b);
+            return !result;
+        })
+
+        props.setFileList(results);
+    }
+
+
     const removeEntry = (handle, dirHandle) => {
         dirHandle.removeEntry(handle.name, { recursive: true }).then(() => {
+            filterList(handle, props.fileList);
             setOpen({...open, open: false, handle: undefined, dirHandle: undefined})
         });
     }
@@ -73,7 +90,7 @@ export default function ResourceList(props) {
                     </List>
                 </div>
             </Grid>
-            <PromptDialog open={open} setOpen={setOpen} onOkEvent={removeEntry} />
+            {open.open ? <PromptDialog open={open} setOpen={setOpen} onOkEvent={removeEntry} /> : ""}
          </div>
     );
 }
