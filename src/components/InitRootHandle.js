@@ -5,7 +5,10 @@ function InitRootHandle(props) {
 
     const loadDir = (event) => {
         window.showDirectoryPicker().then(value => {
-            props.setRootHandle(value);
+            value.requestPermission({mode: "readwrite"}).then(result => {
+                console.log(result);
+                props.setRootHandle(value);
+            })
         }, () => {
             props.setAlertDialog({title: "Błędny katalog", text: "Nie wybrano katalogu.", active: true});
         });
