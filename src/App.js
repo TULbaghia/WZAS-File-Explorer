@@ -3,6 +3,7 @@ import React, {useState} from 'react';
 import AlertDialog from "./shared/AlertDialog";
 import AppView from "./components/AppView";
 import Typography from "@material-ui/core/Typography";
+import ScreenCapture from "./components/ScreenCapture/ScreenCapture";
 
 function App() {
     const [dirStack, setDirStack] = useState([]);
@@ -43,6 +44,7 @@ function App() {
                 }
                 <AlertDialog setState={setAlertDialog} alertDialog={alertDialog}/>
             </main>
+            <ScreenCapture/>
             <footer className={"App-footer"} />
         </div>
     );

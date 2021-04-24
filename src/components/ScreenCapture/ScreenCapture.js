@@ -37,15 +37,12 @@ function getVideoElement() {
 function ScreenCapture(props) {
     return (
         <div>
-            <p>This example shows you the contents of the selected part of your display.
-                Click the Start Capture button to begin.</p>
-
-            <video id="video" autoPlay/>
             <p>
                 <button id="start" onClick={() => startCapture()}>Start Capture</button>
                 &nbsp;
                 <button id="stop" onClick={() => stopCapture()}>Stop Capture</button>
             </p>
+            <video id="video" autoPlay/>
         </div>
     );
 }
