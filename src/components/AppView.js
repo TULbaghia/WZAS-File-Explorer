@@ -6,6 +6,7 @@ import FileView from "./FileView";
 import AddFile from "./AddFile";
 import AddDirectory from "./AddDirectory";
 import Grid from "@material-ui/core/Grid";
+import ScreenCapture from "./ScreenCapture/ScreenCapture";
 
 function AppView(props) {
     const lastDirStack = () => props.dirStack[props.dirStack.length - 1];
@@ -25,6 +26,7 @@ function AppView(props) {
                     </Button>
                     <AddFile dir={lastDirStack()}/>
                     <AddDirectory dir={lastDirStack()}/>
+                    <ScreenCapture/>
                     {/*-file*/}
                 </Grid>
             </header>
