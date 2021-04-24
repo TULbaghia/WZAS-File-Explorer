@@ -22,7 +22,7 @@ function CommonHandler(props) {
     }, [])
 
     return (
-        <iframe src={dataUrl.data} />
+        <iframe width="100%" height="1000px" src={dataUrl.data}/>
     );
 }
 
