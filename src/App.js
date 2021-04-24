@@ -4,6 +4,7 @@ import AlertDialog from "./shared/AlertDialog";
 import AppView from "./components/AppView";
 import Typography from "@material-ui/core/Typography";
 import ScreenCapture from "./components/ScreenCapture/ScreenCapture";
+import AudioCapture from "./components/AudioCapture/AudioCapture";
 
 function App() {
     const [dirStack, setDirStack] = useState([]);
@@ -45,6 +46,7 @@ function App() {
                 <AlertDialog setState={setAlertDialog} alertDialog={alertDialog}/>
             </main>
             <ScreenCapture/>
+            <AudioCapture/>
             <footer className={"App-footer"} />
         </div>
     );
