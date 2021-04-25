@@ -7,19 +7,9 @@ const displayMediaOptions = {
     audio: false
 };
 
-function dumpOptionsInfo(param) {
-    const videoTrack = param.srcObject.getVideoTracks()[0];
-
-    console.info("Track settings:");
-    console.info(JSON.stringify(videoTrack.getSettings(), null, 2));
-    console.info("Track constraints:");
-    console.info(JSON.stringify(videoTrack.getConstraints(), null, 2));
-}
-
 async function startCapture() {
     const videoElem = getVideoElement();
     videoElem.srcObject = await navigator.mediaDevices.getDisplayMedia(displayMediaOptions);
-    dumpOptionsInfo(videoElem);
 }
 
 function stopCapture() {
@@ -34,13 +24,12 @@ function getVideoElement() {
     return document.getElementById("video");
 }
 
-function ScreenCapture(props) {
+function ScreenCapture() {
     return (
         <div>
             <p>
-                <button id="start" onClick={() => startCapture()}>Start Capture</button>
-                &nbsp;
-                <button id="stop" onClick={() => stopCapture()}>Stop Capture</button>
+                <button onClick={() => startCapture()}>Rozpocznij nagrywanie ekranu</button>
+                <button onClick={() => stopCapture()}>Zakończ nagrywanie ekranu</button>
             </p>
             <video id="video" autoPlay/>
         </div>
