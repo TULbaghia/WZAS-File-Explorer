@@ -5,14 +5,14 @@ var chunks = [];
 
 async function startCapture() {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        navigator.mediaDevices.getUserMedia (
+        navigator.mediaDevices.getUserMedia(
             {
                 audio: true
             })
-            .then(function(stream) {
+            .then(function (stream) {
                 mediaRecorder = new MediaRecorder(stream);
                 mediaRecorder.start();
-                mediaRecorder.ondataavailable = function(e) {
+                mediaRecorder.ondataavailable = function (e) {
                     chunks.push(e.data);
                 }
             })
@@ -22,18 +22,17 @@ async function startCapture() {
 function stopCapture() {
 
     mediaRecorder.stop();
-    mediaRecorder.onstop = function(e) {
-        const clipName = prompt('Enter a name for your sound clip');
+    mediaRecorder.onstop = function () {
+        const clipName = prompt('Wybierz nazwę pliku');
 
-        const blob = new Blob(chunks, { 'type' : 'audio/ogg; codecs=opus' });
+        const blob = new Blob(chunks, {'type': 'audio/ogg; codecs=opus'});
         chunks = [];
         const audioURL = window.URL.createObjectURL(blob);
 
-        var link = document.createElement("a");
+        const link = document.createElement("a");
         link.href = audioURL;
         link.download = clipName + ".opus";
-        link.innerHTML = "Click here to download the file";
-        document.body.appendChild(link);
+        link.click();
     }
 }
 
@@ -41,8 +40,8 @@ function AudioCapture() {
     return (
         <div>
             <p>
-                <button id="start recording" onClick={() => startCapture()}>Start Recording Microphone</button>
-                <button id="stop recording" onClick={() => stopCapture()}>Stop Recording Microphone</button>
+                <button onClick={() => startCapture()}>Zacznij rejestrowanie dźwięku</button>
+                <button onClick={() => stopCapture()}>Zatrzymaj rejestrowanie dźwięku</button>
             </p>
         </div>
     );
