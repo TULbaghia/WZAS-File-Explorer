@@ -1,7 +1,7 @@
 import React, { forwardRef } from "react";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
-import { Button, Slide, Typography } from "@material-ui/core";
+import { Button, Typography } from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
 import FastRewindIcon from "@material-ui/icons/FastRewind";
 import FastForwardIcon from "@material-ui/icons/FastForward";
@@ -12,6 +12,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import VolumeUpIcon from "@material-ui/icons/VolumeUp";
 import VolumeOff from "@material-ui/icons/VolumeOff";
 import FullScreenIcon from "@material-ui/icons/Fullscreen";
+import PictureInPictureAltIcon from "@material-ui/icons/PictureInPictureAlt";
 import Popover from "@material-ui/core/Popover";
 
 const useStyles = makeStyles({
@@ -104,6 +105,7 @@ export default forwardRef(
       playbackRate,
       onPlaybackRateChange,
       onToggleFullScreen,
+      onTogglePictureInPicture,
       played,
       onSeek,
       onSeekMouseDown,
@@ -273,6 +275,13 @@ export default forwardRef(
                 ))}
               </Grid>
             </Popover>
+
+            <IconButton
+              onClick={onTogglePictureInPicture}
+              className={classes.bottomIcons}
+            >
+              <PictureInPictureAltIcon fontSize="medium" />
+            </IconButton>
 
             <IconButton
               onClick={onToggleFullScreen}

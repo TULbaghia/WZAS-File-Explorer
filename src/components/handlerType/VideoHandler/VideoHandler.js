@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import Container from "@material-ui/core/Container";
 import ReactPlayer from "react-player";
-import { makeStyles, withStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import VideoControls from "./VideoControls";
 import screenfull from "screenfull";
 
@@ -43,6 +43,8 @@ function VideoHandler(props) {
   });
 
   const [timeDisplayFormat, setTimeDisplayFormat] = useState("normal");
+
+  const [active, setActive] = useState(false);
 
   const { playing, muted, volume, playbackRate, played, seeking } = state;
 
@@ -90,6 +92,20 @@ function VideoHandler(props) {
     screenfull.toggle(playerContainerRef.current);
   };
 
+  const togglePIP = () => {
+    let player = document.getElementsByTagName("VIDEO")[0];
+    if (player !== undefined && player.readyState === 4) {
+      if (document.pictureInPictureElement && !active) {
+        document.exitPictureInPicture();
+      } else {
+        player.requestPictureInPicture();
+      }
+    }
+  };
+  useEffect(() => {
+    togglePIP();
+  }, [active]);
+
   const handleProgress = (changeState) => {
     console.log(changeState);
 
@@ -98,7 +114,7 @@ function VideoHandler(props) {
       count = 0;
     }
 
-    if (controlsRef.current.style.visibility == "visible") {
+    if (controlsRef.current.style.visibility === "visible") {
       count += 1;
     }
 
@@ -172,6 +188,7 @@ function VideoHandler(props) {
         onMouseMove={handleMouseMove}
       >
         <ReactPlayer
+          id={"video"}
           ref={playerRef}
           width={"100%"}
           height={"100%"}
@@ -197,6 +214,7 @@ function VideoHandler(props) {
           playbackRate={playbackRate}
           onPlaybackRateChange={handlePlaybackRateChange}
           onToggleFullScreen={toggleFullScreen}
+          onTogglePictureInPicture={togglePIP}
           played={played}
           onSeek={handleSeekChange}
           onSeekMouseDown={handleSeekMouseDown}

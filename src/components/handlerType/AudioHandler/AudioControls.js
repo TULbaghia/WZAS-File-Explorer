@@ -1,7 +1,7 @@
 import React, { forwardRef } from "react";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
-import { Button, Slide, Typography } from "@material-ui/core";
+import { Button, Typography } from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
 import FastRewindIcon from "@material-ui/icons/FastRewind";
 import FastForwardIcon from "@material-ui/icons/FastForward";
