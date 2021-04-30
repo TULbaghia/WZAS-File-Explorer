@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import CKEditor from "@ckeditor/ckeditor5-react";
-import parse from "html-react-parser";
 import "../../App.css";
 import Button from "@material-ui/core/Button";
 import SaveIcon from "@material-ui/icons/Save";
 import CreateIcon from "@material-ui/icons/Create";
 import VisibilityIcon from "@material-ui/icons/Visibility";
+import FileSaver from "file-saver";
+import { htmlToText } from "html-to-text";
 
 const useStyles = makeStyles((theme) => ({
   button: {
@@ -23,7 +24,6 @@ function TxtHandler(props) {
   const classes = useStyles();
   const [textFromEditor, setTextFromEditor] = useState("");
   const [initialText, setInitialText] = useState({ data: "" });
-  const [fileUrl, setFileUrl] = useState({ data: "" });
   const [editMode, setEditMode] = useState(false);
 
   function handleOnCLick() {
@@ -51,27 +51,25 @@ function TxtHandler(props) {
     };
     fileReader.readAsText(props.file);
 
-    let secondFileReader = new FileReader();
-    secondFileReader.onload = (event) => {
-      if (mounted) {
-        setFileUrl({
-          data: event.target.result,
-        });
-      }
-    };
-    secondFileReader.readAsDataURL(props.file);
-
     return function cleanup() {
       mounted = false;
     };
   }, []);
 
+  const handleSave = () => {
+    let string = htmlToText(textFromEditor).toString();
+    var blob = new Blob([string], {
+      type: "text/plain;charset=utf-8",
+    });
+    FileSaver.saveAs(blob, props.file.name);
+  };
+
   return (
     <div>
       <div className="textHandler">
         <div id="viewer" className="viewer">
-          <h2>{props.file.name}</h2>
-          <p>{parse(textFromEditor)}</p>
+          <h4>{props.file.name}</h4>
+          {htmlToText(textFromEditor)}
         </div>
         <div id="editor" className="editor">
           <CKEditor
@@ -101,6 +99,7 @@ function TxtHandler(props) {
           size="medium"
           className={classes.button}
           startIcon={<SaveIcon />}
+          onClick={handleSave}
         >
           Zapisz
         </Button>
