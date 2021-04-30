@@ -1,0 +1,34 @@
+.buttons {
+  margin: auto;
+  /* display: block; */
+  text-align: center;
+}
+
+.textHandler {
+  width: 300px;
+  height: 300px;
+  position: relative;
+  margin: auto;
+  border: 3px solid pink;
+}
+.ck-editor__editable_inline {
+  min-height: 200px;
+}
+.editor,
+.viewer {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.viewer {
+  z-index: 10;
+  visibility: visible;
+}
+.editor {
+  visibility: hidden;
+}
+h2 {
+  margin-top: 0;
+}
