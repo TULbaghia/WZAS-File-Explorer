@@ -3,7 +3,7 @@
 }
 
 .textHandler {
-  min-height: 310px;
+  min-height: 300px;
   position: relative;
   margin: auto;
   border: 3px solid #bdbdbd;
@@ -11,7 +11,7 @@
   overflow: auto;
 }
 .ck-editor__editable_inline {
-  min-height: 250px;
+  min-height: 259px;
 }
 .editor,
 .viewer {
