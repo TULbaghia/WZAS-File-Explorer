@@ -1,12 +1,8 @@
 import React from 'react';
 
 var mediaRecorder;
-var chunksVideo = [];
-var chunksAudio = [];
 var videoStream;
 var audioStream;
-var tracks;
-var stream;
 var blobs = [];
 
 const displayMediaOptions = {
@@ -27,8 +23,8 @@ async function startCapture() {
                 audio: true
             })
     }
-    tracks = [...videoStream.getVideoTracks(), ...mergeAudioStreams(videoStream, audioStream)]
-    stream = new MediaStream(tracks);
+    let tracks = [...videoStream.getVideoTracks(), ...mergeAudioStreams(videoStream, audioStream)]
+    let stream = new MediaStream(tracks);
     mediaRecorder = new MediaRecorder(stream, {mimeType: 'video/webm; codecs=vp9,opus'});
     mediaRecorder.ondataavailable = function (e) {
         blobs.push(e.data);
@@ -61,8 +57,6 @@ function stopCapture() {
         const clipName = prompt('Wybierz nazwę pliku');
 
         const blob = new Blob(blobs, {type: 'video/webm'});
-        chunksVideo = [];
-        chunksAudio = [];
         blobs = [];
         const videoURL = window.URL.createObjectURL(blob);
 
