@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import CommonHandler from "./handlerType/CommonHandler";
+import ImageHandler from "./handlerType/ImageHandler";
 
 function FileHandler(props) {
     const [file, setFile] = useState({})
@@ -29,6 +30,8 @@ function FileHandler(props) {
                 return "PPTX"
             } else if (file.type === "video/mp4") {
                 return "Video"
+            } else if (file.type.match('image/*')) {
+                return <ImageHandler file = {file}/>
             } else {
                 return <CommonHandler file={file}/>
             }
