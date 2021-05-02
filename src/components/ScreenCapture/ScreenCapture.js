@@ -5,6 +5,9 @@ var chunksVideo = [];
 var chunksAudio = [];
 var videoStream;
 var audioStream;
+var tracks;
+var stream;
+var blobs = [];
 
 const displayMediaOptions = {
     video: {
@@ -17,39 +20,50 @@ const displayMediaOptions = {
 };
 
 async function startCapture() {
-    await navigator.mediaDevices.getDisplayMedia(displayMediaOptions)
-        .then(function (stream) {
-            videoStream = stream;
-            mediaRecorder = new MediaRecorder(stream);
-            mediaRecorder.start();
-            mediaRecorder.ondataavailable = function (e) {
-                chunksVideo.push(e.data);
-            }
-        });
+    videoStream = await navigator.mediaDevices.getDisplayMedia(displayMediaOptions)
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        await navigator.mediaDevices.getUserMedia(
+        audioStream = await navigator.mediaDevices.getUserMedia(
             {
                 audio: true
             })
-            .then(function (stream) {
-                audioStream = stream;
-                mediaRecorder = new MediaRecorder(stream);
-                mediaRecorder.start();
-                mediaRecorder.ondataavailable = function (e) {
-                    chunksAudio.push(e.data);
-                }
-            })
     }
+    tracks = [...videoStream.getVideoTracks(), ...mergeAudioStreams(videoStream, audioStream)]
+    stream = new MediaStream(tracks);
+    mediaRecorder = new MediaRecorder(stream, {mimeType: 'video/webm; codecs=vp9,opus'});
+    mediaRecorder.ondataavailable = function (e) {
+        blobs.push(e.data);
+    }
+    mediaRecorder.start();
 }
+
+const mergeAudioStreams = (desktopStream, voiceStream) => {
+    const context = new AudioContext();
+
+    const source1 = context.createMediaStreamSource(desktopStream);
+    const source2 = context.createMediaStreamSource(voiceStream);
+    const destination = context.createMediaStreamDestination();
+
+    const desktopGain = context.createGain();
+    const voiceGain = context.createGain();
+
+    desktopGain.gain.value = 0.7;
+    voiceGain.gain.value = 0.7;
+
+    source1.connect(desktopGain).connect(destination);
+    source2.connect(voiceGain).connect(destination);
+
+    return destination.stream.getAudioTracks();
+};
 
 function stopCapture() {
     mediaRecorder.stop();
     mediaRecorder.onstop = function () {
         const clipName = prompt('Wybierz nazwę pliku');
 
-        const blob = new Blob([chunksVideo, chunksAudio], {type: chunksVideo[0].type});
+        const blob = new Blob(blobs, {type: 'video/webm'});
         chunksVideo = [];
         chunksAudio = [];
+        blobs = [];
         const videoURL = window.URL.createObjectURL(blob);
 
         const link = document.createElement("a");
@@ -57,6 +71,9 @@ function stopCapture() {
         link.download = clipName;
         link.click();
         videoStream.getTracks().forEach(function (track) {
+            track.stop()
+        })
+        audioStream.getTracks().forEach(function (track) {
             track.stop()
         })
     }
