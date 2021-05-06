@@ -13,6 +13,7 @@ function AddFile(props) {
     }
 
     const addFile = (name, dir) => {
+        name += ".txt";
         dir.getFileHandle(name).then((exists) => {
             setAlertDialog({active: true, title: "Błąd", text:"Taki plik już istnieje"});
         }).catch((create) => {
@@ -23,7 +24,7 @@ function AddFile(props) {
     }
 
     const validateNew = (name) => {
-        return name.includes(".");
+        return !name.includes(".") && name !== "";
     }
 
     return (
@@ -32,7 +33,7 @@ function AddFile(props) {
                 <NoteAddRoundedIcon/>
             </Button>
             <FormDialog dir={props.dir} dialogOpen={dialogOpen} setDialogOpen={setDialogOpen} addFile={addFile}
-                        validate={validateNew}/>
+                        validate={validateNew} type={"plik"}/>
             <AlertDialog setState={setAlertDialog} alertDialog={alertDialog}/>
         </div>
     );

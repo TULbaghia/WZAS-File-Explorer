@@ -7,27 +7,27 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
-export default function FormDialog(props) {
+export default function FormRenameDialog(props) {
     const [fileName, setFileName] = React.useState("");
-    const [isInputValid, setIsInputValid] = React.useState(false)
+    const [isInputValid, setIsInputValid] = React.useState(true)
 
     useEffect(() => {
         setFileName("");
-    }, [props.dialogOpen])
+    }, [props.open])
 
     const handleClose = () => {
-        props.setDialogOpen(false);
+        props.setOpen({...props.open, open: false});
     };
 
     const handleChange = (input) => {
-        setIsInputValid(props.validate(input));
+        // setIsInputValid(props.validate(input));
         setFileName(input);
     }
 
     return (
         <>
-            <Dialog open={props.dialogOpen} onClose={handleClose} aria-labelledby="form-dialog-title">
-                <DialogTitle id="form-dialog-title">Dodaj nowy {props.type}</DialogTitle>
+            <Dialog open={props.open.open} onClose={handleClose} aria-labelledby="form-dialog-title">
+                <DialogTitle id="form-dialog-title">Zmień nazwę {props.type}u</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
                        Podaj nazwę {props.type}u
@@ -43,12 +43,12 @@ export default function FormDialog(props) {
                         fullWidth
                     />
                     <DialogContentText style={ {color: "crimson", visibility: !isInputValid ? "visible" : "hidden"}}>
-                        Nieprawidłowa nazwa
+                        Nieprawidłowa nazwa {props.type}u
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose} color="primary">Wyjdź</Button>
-                    <Button onClick={() => props.addFile(fileName, props.dir)} disabled={!isInputValid} color="primary">Utwórz</Button>
+                    <Button onClick={() => props.onOkEvent(fileName)} disabled={!isInputValid} color="primary">Zmień</Button>
                 </DialogActions>
             </Dialog>
         </>
