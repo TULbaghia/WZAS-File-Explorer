@@ -12,6 +12,10 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import FolderIcon from '@material-ui/icons/Folder';
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
 import PromptDialog from "./PromptDialog";
+import FormRenameDialog from "./FormRenameDialog";
+import CreateIcon from '@material-ui/icons/Create';
+import {MoveDirectoryController, MoveFileController} from "../components/logic/MoveDirectoryController";
+import CircularIndeterminate from "./CircularIndeterminate";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -28,13 +32,15 @@ const useStyles = makeStyles((theme) => ({
 
 export default function ResourceList(props) {
     const [open, setOpen] = React.useState({open: false, handle: undefined, dirHandle: undefined});
+    const [openRename, setOpenRename] = React.useState({open: false, handle: undefined, dirHandle: undefined});
+    const [openSpinner, setOpenSpinner] = React.useState(false);
 
     const classes = useStyles();
 
     const filterList = async (handle, fileList) => {
         async function filter(arr, callback) {
             const fail = Symbol()
-            return (await Promise.all(arr.map(async item => (await callback(item)) ? item : fail))).filter(i=>i!==fail)
+            return (await Promise.all(arr.map(async item => (await callback(item)) ? item : fail))).filter(i => i !== fail)
         }
 
         let list = Array.from(fileList);
@@ -49,14 +55,54 @@ export default function ResourceList(props) {
 
 
     const removeEntry = (handle, dirHandle) => {
-        dirHandle.removeEntry(handle.name, { recursive: true }).then(() => {
+        dirHandle.removeEntry(handle.name, {recursive: true}).then(() => {
             filterList(handle, props.fileList);
             setOpen({...open, open: false, handle: undefined, dirHandle: undefined})
+            setOpenRename({...openRename, open: false, handle: undefined, dirHandle: undefined})
         });
+    }
+
+    const moveEntry = (newFileName) => {
+        setOpen({...open, open: false, handle: undefined, dirHandle: undefined});
+        setOpenRename({...openRename, open: false, handle: undefined, dirHandle: undefined});
+        setOpenSpinner(true);
+
+
+        if (openRename.handle.kind === "directory") {
+            MoveDirectoryController({
+                oldDirHandle: openRename.dirHandle,
+                oldDirName: openRename.handle.name,
+                newDirHandle: openRename.dirHandle,
+                newDirName: newFileName,
+                removeAfter: true
+            }).then(() => {
+                setOpenSpinner(false);
+            }).catch((error) => {
+                setOpenSpinner(false);
+                alert(error);
+            });
+        } else {
+            MoveFileController({
+                oldDirHandle: openRename.dirHandle,
+                oldFileName: openRename.handle.name,
+                newDirHandle: openRename.dirHandle,
+                newFileName: newFileName + "." + openRename.handle.name.split('.').pop(),
+                removeAfter: true
+            }).then(() => {
+                setOpenSpinner(false);
+            }).catch((error) => {
+                setOpenSpinner(false);
+                alert(error);
+            });
+        }
     }
 
     const handleDelete = (handle, dirHandle) => {
         setOpen({...open, open: true, handle: handle, dirHandle: dirHandle});
+    }
+
+    const handleMove = (handle, dirHandle) => {
+        setOpenRename({...openRename, open: true, handle: handle, dirHandle: dirHandle});
     }
 
     const generate = (element) => {
@@ -66,13 +112,17 @@ export default function ResourceList(props) {
                     <ListItem key={i++} onClick={() => props.event(value.handle)}>
                         <ListItemAvatar>
                             <Avatar>
-                                {value.kind === "directory" ? <FolderIcon /> : <InsertDriveFileIcon />}
+                                {value.kind === "directory" ? <FolderIcon/> : <InsertDriveFileIcon/>}
                             </Avatar>
                         </ListItemAvatar>
                         <ListItemText primary={value.name}/>
                         <ListItemSecondaryAction>
-                            <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(value.handle, props.dir)}>
+                            <IconButton edge="end" aria-label="delete"
+                                        onClick={() => handleDelete(value.handle, props.dir)}>
                                 <DeleteIcon/>
+                            </IconButton>
+                            <IconButton edge="end" aria-label="rename" onClick={() => handleMove(value.handle, props.dir)}>
+                                <CreateIcon/>
                             </IconButton>
                         </ListItemSecondaryAction>
                     </ListItem>
@@ -90,7 +140,10 @@ export default function ResourceList(props) {
                     </List>
                 </div>
             </Grid>
-            {open.open ? <PromptDialog open={open} setOpen={setOpen} onOkEvent={removeEntry} /> : ""}
-         </div>
+            {open.open ? <PromptDialog open={open} setOpen={setOpen} onOkEvent={removeEntry}/> : ""}
+            {openRename.open ?
+                <FormRenameDialog open={openRename} setOpen={setOpenRename} onOkEvent={moveEntry} type={"plik"}/> : ""}
+            <CircularIndeterminate open={openSpinner}/>
+        </div>
     );
 }

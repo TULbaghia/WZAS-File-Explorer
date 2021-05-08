@@ -32,7 +32,7 @@ function AddDirectory(props) {
                 <CreateNewFolderRoundedIcon/>
             </Button>
             <FormDialog dir={props.dir} dialogOpen={dialogOpen} setDialogOpen={setDialogOpen} addFile={addFile}
-                        validate={validateNew}/>
+                        validate={validateNew} type={"katalog"}/>
             <AlertDialog setState={setAlertDialog} alertDialog={alertDialog}/>
         </div>
     );
