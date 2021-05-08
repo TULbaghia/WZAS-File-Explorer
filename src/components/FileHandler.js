@@ -26,11 +26,6 @@ function FileHandler(props) {
     };
   }, []);
 
-        return <VideoHandler file={file} />;
-      }       }
-                return <ImageHandler file = {file}/>
-            } else { else {
-
   const renderFile = () => {
     if (file.type || file.type === "") {
       if (file.type === "" && file.name.endsWith(".pptx")) {
