@@ -3,6 +3,7 @@ import CommonHandler from "./handlerType/CommonHandler";
 import AudioHandler from "./handlerType/AudioHandler/AudioHandler";
 import VideoHandler from "./handlerType/VideoHandler/VideoHandler";
 import TxtHandler from "./handlerType/TxtHandler";
+import ImageHandler from "./handlerType/ImageHandler";
 
 function FileHandler(props) {
   const [file, setFile] = useState({});
@@ -25,6 +26,11 @@ function FileHandler(props) {
     };
   }, []);
 
+        return <VideoHandler file={file} />;
+      }       }
+                return <ImageHandler file = {file}/>
+            } else { else {
+
   const renderFile = () => {
     if (file.type || file.type === "") {
       if (file.type === "" && file.name.endsWith(".pptx")) {
@@ -35,6 +41,8 @@ function FileHandler(props) {
         return <AudioHandler file={file} />;
       } else if (file.type === "video/mp4") {
         return <VideoHandler file={file} />;
+      } else if (file.type.match('image/*')) {
+        return <ImageHandler file={file} />
       } else {
         return <CommonHandler file={file} />;
       }

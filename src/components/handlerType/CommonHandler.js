@@ -21,7 +21,9 @@ function CommonHandler(props) {
     };
   }, []);
 
-  return <iframe src={dataUrl.data} />;
+    return (
+        <iframe width="100%" height="1000px" src={dataUrl.data}/>
+    );
 }
 
 export default CommonHandler;

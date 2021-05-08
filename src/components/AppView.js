@@ -25,6 +25,7 @@ function AppView(props) {
                     </Button>
                     <AddFile dir={lastDirStack()}/>
                     <AddDirectory dir={lastDirStack()}/>
+
                     {/*-file*/}
                 </Grid>
             </header>
