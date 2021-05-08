@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import CommonHandler from "./handlerType/CommonHandler";
 import AudioHandler from "./handlerType/AudioHandler/AudioHandler";
 import VideoHandler from "./handlerType/VideoHandler/VideoHandler";
+import TxtHandler from "./handlerType/TxtHandler";
 
 function FileHandler(props) {
   const [file, setFile] = useState({});
@@ -28,6 +29,8 @@ function FileHandler(props) {
     if (file.type || file.type === "") {
       if (file.type === "" && file.name.endsWith(".pptx")) {
         return "PPTX";
+      } else if (file.type === "text/plain") {
+        return <TxtHandler file={file} />;
       } else if (file.type === "audio/mpeg") {
         return <AudioHandler file={file} />;
       } else if (file.type === "video/mp4") {
