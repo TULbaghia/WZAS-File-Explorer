@@ -1,4 +1,8 @@
 import React from 'react';
+import FiberManualRecordTwoToneIcon from '@material-ui/icons/FiberManualRecordTwoTone';
+import PauseCircleFilledTwoToneIcon from '@material-ui/icons/PauseCircleFilledTwoTone';
+import VideocamIcon from '@material-ui/icons/Videocam';
+import VideocamOffIcon from '@material-ui/icons/VideocamOff';
 
 var mediaRecorder;
 var videoStream;
@@ -10,9 +14,9 @@ const displayMediaOptions = {
         cursor: "always"
     },
     audio: true,
-    audioBitsPerSecond : 128000,
-    videoBitsPerSecond : 2500000,
-    mimeType : 'video/mp4'
+    audioBitsPerSecond: 128000,
+    videoBitsPerSecond: 2500000,
+    mimeType: 'video/mp4'
 };
 
 async function startCapture() {
@@ -30,6 +34,8 @@ async function startCapture() {
         blobs.push(e.data);
     }
     mediaRecorder.start();
+    document.getElementById("stopScreenCapture").hidden = false;
+    document.getElementById("startScreenCapture").hidden = true;
 }
 
 const mergeAudioStreams = (desktopStream, voiceStream) => {
@@ -71,14 +77,36 @@ function stopCapture() {
             track.stop()
         })
     }
+    document.getElementById("startScreenCapture").hidden = false;
+    document.getElementById("stopScreenCapture").hidden = true;
 }
 
 function ScreenCapture() {
     return (
         <div>
-            <p>
-                <button onClick={() => startCapture()}>Rozpocznij nagrywanie ekranu</button>
-                <button onClick={() => stopCapture()}>Zakończ nagrywanie ekranu</button>
+            <p id={"startScreenCapture"} hidden={false} style={{fontSize: "xxx-large"}}>
+                <FiberManualRecordTwoToneIcon fontSize={"inherit"}
+                                              style={{position: "absolute", right: "10px", top: "10px"}}
+                                              onClick={() => {
+                                                  startCapture();
+                                              }}/>
+            </p>
+            <p id={"stopScreenCapture"} hidden={true} style={{fontSize: "xxx-large"}}>
+                <PauseCircleFilledTwoToneIcon fontSize={"inherit"}
+                                              style={{position: "absolute", right: "10px", top: "10px"}}
+                                              onClick={() => {
+                                                  stopCapture();
+                                              }}/>
+            </p>
+            <p id={"startCameraCapture"} hidden={false} style={{fontSize: "xxx-large"}}>
+                <VideocamIcon fontSize={"inherit"}
+                                              style={{position: "absolute", right: "60px", top: "10px"}}
+                                              onClick={() => {}}/>
+            </p>
+            <p id={"stopCameraCapture"} hidden={true} style={{fontSize: "xxx-large"}}>
+                <VideocamOffIcon fontSize={"inherit"}
+                                              style={{position: "absolute", right: "60px", top: "10px"}}
+                                              onClick={() => {}}/>
             </p>
         </div>
     );
