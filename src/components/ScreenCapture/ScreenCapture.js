@@ -37,7 +37,12 @@ async function startCapture() {
                 audio: true
             })
     }
-    let tracks = [...videoStream.getVideoTracks(), ...mergeAudioStreams(videoStream, audioStream)]
+    let tracks;
+    if (videoStream.getAudioTracks().length === 0) {
+        tracks = [...videoStream.getVideoTracks(), ...mergeAudioStreams(audioStream, audioStream)]
+    } else {
+        tracks = [...videoStream.getVideoTracks(), ...mergeAudioStreams(videoStream, audioStream)]
+    }
     let stream = new MediaStream(tracks);
     mediaRecorder = new MediaRecorder(stream, {mimeType: 'video/webm; codecs=vp9,opus'});
     mediaRecorder.ondataavailable = function (e) {
@@ -51,25 +56,25 @@ async function startCapture() {
 async function startCamera() {
     cameraStream = await navigator.mediaDevices.getUserMedia(cameraConstraints);
 
-            let video = document.getElementById('camera');
-            if ("srcObject" in video) {
-                video.srcObject = cameraStream;
-            } else {
-                video.src = window.URL.createObjectURL(cameraStream);
-            }
+    let video = document.getElementById('camera');
+    if ("srcObject" in video) {
+        video.srcObject = cameraStream;
+    } else {
+        video.src = window.URL.createObjectURL(cameraStream);
+    }
 
-            video.onloadedmetadata = function (ev) {
-                video.play();
-                video.requestPictureInPicture();
-                video.onleavepictureinpicture = e => {
-                    cameraStream.getTracks().forEach(function (track) {
-                        track.stop();
-                    });
+    video.onloadedmetadata = function (ev) {
+        video.play();
+        video.requestPictureInPicture();
+        video.onleavepictureinpicture = e => {
+            cameraStream.getTracks().forEach(function (track) {
+                track.stop();
+            });
 
-                    document.getElementById("startCameraCapture").hidden = false;
-                    document.getElementById("stopCameraCapture").hidden = true;
-                };
-            }
+            document.getElementById("startCameraCapture").hidden = false;
+            document.getElementById("stopCameraCapture").hidden = true;
+        };
+    }
 
     document.getElementById("startCameraCapture").hidden = true;
     document.getElementById("stopCameraCapture").hidden = false;
@@ -156,7 +161,7 @@ function ScreenCapture() {
                 <VideocamOffIcon fontSize={"inherit"}
                                  style={{position: "absolute", right: "60px", top: "10px"}}
                                  onClick={() => {
-                                    stopCamera();
+                                     stopCamera();
                                  }}/>
             </p>
             <video id="camera" height={0} width={0}/>
