@@ -7,7 +7,10 @@ import VideocamOffIcon from '@material-ui/icons/VideocamOff';
 var mediaRecorder;
 var videoStream;
 var audioStream;
+var cameraStream;
 var blobs = [];
+var video;
+var canvas;
 
 const displayMediaOptions = {
     video: {
@@ -17,6 +20,13 @@ const displayMediaOptions = {
     audioBitsPerSecond: 128000,
     videoBitsPerSecond: 2500000,
     mimeType: 'video/mp4'
+};
+
+const cameraConstraints = {
+    audio: false,
+    video: {
+        width: 1280, height: 720
+    }
 };
 
 async function startCapture() {
@@ -36,6 +46,43 @@ async function startCapture() {
     mediaRecorder.start();
     document.getElementById("stopScreenCapture").hidden = false;
     document.getElementById("startScreenCapture").hidden = true;
+}
+
+async function startCamera() {
+    cameraStream = await navigator.mediaDevices.getUserMedia(cameraConstraints);
+
+            let video = document.getElementById('camera');
+            if ("srcObject" in video) {
+                video.srcObject = cameraStream;
+            } else {
+                video.src = window.URL.createObjectURL(cameraStream);
+            }
+
+            video.onloadedmetadata = function (ev) {
+                video.play();
+                video.requestPictureInPicture();
+                video.onleavepictureinpicture = e => {
+                    cameraStream.getTracks().forEach(function (track) {
+                        track.stop();
+                    });
+
+                    document.getElementById("startCameraCapture").hidden = false;
+                    document.getElementById("stopCameraCapture").hidden = true;
+                };
+            }
+
+    document.getElementById("startCameraCapture").hidden = true;
+    document.getElementById("stopCameraCapture").hidden = false;
+}
+
+function stopCamera() {
+    cameraStream.getTracks().forEach(function (track) {
+        track.stop();
+    });
+
+    document.exitPictureInPicture();
+    document.getElementById("startCameraCapture").hidden = false;
+    document.getElementById("stopCameraCapture").hidden = true;
 }
 
 const mergeAudioStreams = (desktopStream, voiceStream) => {
@@ -100,14 +147,19 @@ function ScreenCapture() {
             </p>
             <p id={"startCameraCapture"} hidden={false} style={{fontSize: "xxx-large"}}>
                 <VideocamIcon fontSize={"inherit"}
-                                              style={{position: "absolute", right: "60px", top: "10px"}}
-                                              onClick={() => {}}/>
+                              style={{position: "absolute", right: "60px", top: "10px"}}
+                              onClick={() => {
+                                  startCamera()
+                              }}/>
             </p>
             <p id={"stopCameraCapture"} hidden={true} style={{fontSize: "xxx-large"}}>
                 <VideocamOffIcon fontSize={"inherit"}
-                                              style={{position: "absolute", right: "60px", top: "10px"}}
-                                              onClick={() => {}}/>
+                                 style={{position: "absolute", right: "60px", top: "10px"}}
+                                 onClick={() => {
+                                    stopCamera();
+                                 }}/>
             </p>
+            <video id="camera" height={0} width={0}/>
         </div>
     );
 }
