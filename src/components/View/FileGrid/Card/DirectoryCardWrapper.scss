@@ -1,0 +1,12 @@
+.directoryCard {
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-content: center;
+
+  & > svg {
+    font-size: 2rem;
+    margin-right: 1rem;
+  }
+}

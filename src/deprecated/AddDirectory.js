@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import Button from "@material-ui/core/Button";
 import CreateNewFolderRoundedIcon from '@material-ui/icons/CreateNewFolderRounded';
-import FormDialog from "../shared/FormDialog";
-import AlertDialog from "../shared/AlertDialog";
+import FormDialog from "./shared/FormDialog";
+import AlertDialog from "../Context/Util/AlertDialog";
 
 function AddDirectory(props) {
     const [alertDialog, setAlertDialog] = useState({active: false, title: "", text: ""});

@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import Button from "@material-ui/core/Button";
 import NoteAddRoundedIcon from "@material-ui/icons/NoteAddRounded";
-import FormDialog from "../shared/FormDialog";
-import AlertDialog from "../shared/AlertDialog";
+import FormDialog from "./shared/FormDialog";
+import AlertDialog from "../Context/Util/AlertDialog";
 
 function AddFile(props) {
     const [alertDialog, setAlertDialog] = useState({active: false, title: "", text: ""});

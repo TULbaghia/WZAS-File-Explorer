@@ -14,7 +14,7 @@ import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
 import PromptDialog from "./PromptDialog";
 import FormRenameDialog from "./FormRenameDialog";
 import CreateIcon from '@material-ui/icons/Create';
-import {MoveDirectoryController, MoveFileController} from "../components/logic/MoveDirectoryController";
+import {MoveDirectoryController, MoveFileController} from "../../components/logic/MoveDirectoryController";
 import CircularIndeterminate from "./CircularIndeterminate";
 
 const useStyles = makeStyles((theme) => ({
@@ -105,11 +105,64 @@ export default function ResourceList(props) {
         setOpenRename({...openRename, open: true, handle: handle, dirHandle: dirHandle});
     }
 
+    const handleOnDrag = async (e, src) => {
+        console.log("ondrag");
+        window.draggableObject = src;
+    }
+
+    const handleOnDrop = (e, dst) => {
+        setOpenSpinner(true);
+        if (window.draggableObject != null) {
+            if (window.draggableObject.kind === "directory") {
+                MoveDirectoryController({
+                    oldDirHandle: props.dir,
+                    oldDirName: window.draggableObject.handle.name,
+                    newDirHandle: dst.handle,
+                    newDirName: window.draggableObject.handle.name,
+                    removeAfter: true
+                }).catch((error) => {
+                    alert(error);
+                }).finally(() => {
+                    setOpenSpinner(false);
+                    window.draggableObject = null;
+                });
+            } else {
+                MoveFileController({
+                    oldDirHandle: props.dir,
+                    oldFileName: window.draggableObject.handle.name,
+                    newDirHandle: dst.handle,
+                    newFileName: window.draggableObject.handle.name,
+                    removeAfter: true
+                }).catch((error) => {
+                    alert(error);
+                }).finally(() => {
+                    setOpenSpinner(false);
+                    window.draggableObject = null;
+                });
+            }
+        }
+    }
+
+
     const generate = (element) => {
         let i = 0;
         return element.map((value) => {
+                let listItemProps = {
+                    onDrag: ((e) => handleOnDrag(e, value)),
+                };
+                if (value.kind === "directory") {
+                    listItemProps = {
+                        ...listItemProps,
+                        onDrop: ((e) => handleOnDrop(e, value)),
+                        onDragOver: ((e) => {e.preventDefault()})
+                    };
+                }
+
                 return (
-                    <ListItem key={i++} onClick={() => props.event(value.handle)}>
+                    <ListItem key={i++} onClick={() => props.event(value.handle)}
+                              draggable={true}
+                              {...listItemProps}
+                    >
                         <ListItemAvatar>
                             <Avatar>
                                 {value.kind === "directory" ? <FolderIcon/> : <InsertDriveFileIcon/>}

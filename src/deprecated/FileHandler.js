@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import CommonHandler from "./handlerType/CommonHandler";
-import AudioHandler from "./handlerType/AudioHandler/AudioHandler";
-import VideoHandler from "./handlerType/VideoHandler/VideoHandler";
-import TxtHandler from "./handlerType/TxtHandler";
-import ImageHandler from "./handlerType/ImageHandler";
+import CommonHandler from "../components/handlerType/CommonHandler";
+import AudioHandler from "../components/handlerType/AudioHandler/AudioHandler";
+import VideoHandler from "../components/handlerType/VideoHandler/VideoHandler";
+import TxtHandler from "../components/handlerType/TxtHandler";
+import ImageHandler from "../components/handlerType/ImageHandler";
 
 function FileHandler(props) {
   const [file, setFile] = useState({});
