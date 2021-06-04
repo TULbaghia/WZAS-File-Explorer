@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -8,6 +8,7 @@ import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import FileHandler from "./FileHandler";
 import CancelRoundedIcon from '@material-ui/icons/CancelRounded';
+import {useCloseFileHandle, useGetFileHandle, usePushFileHandle} from "../../Context/AppProvider";
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -47,25 +48,26 @@ const useStyles = makeStyles((theme) => ({
         flexGrow: 1,
         width: '100%',
         backgroundColor: theme.palette.background.paper,
+        marginTop: "1rem"
     },
 }));
 
 export default function FileView(props) {
     const classes = useStyles();
     const [value, setValue] = React.useState(0);
+    const getFileHandle = useGetFileHandle();
+    const dispatchCloseFileHandle = useCloseFileHandle()
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
 
-    const handleFileClose = (file) => {
-        let list = Array.from(props.fileList);
-        let filteredList = list.filter(x => x !== file);
-        props.setFileList(filteredList);
+    const handleFileClose = (option) => {
+        dispatchCloseFileHandle(option.id)
     }
 
     return (
-        <div className={classes.root}>
+        <div className={classes.root} >
             <AppBar position="static" color="default">
                 <Tabs
                     value={value}
@@ -76,17 +78,17 @@ export default function FileView(props) {
                     scrollButtons="auto"
                     aria-label="scrollable auto tabs example"
                 >
-                    {props.fileList.map((x, i) =>
-                        <Tab key={i} label={x.name} icon={
+                    {getFileHandle.map((x, i) =>
+                        <Tab key={x.id} label={x.name} icon={
                             <CancelRoundedIcon onClick={() => handleFileClose(x)}/>
                         } {...a11yProps(i)}/>
                     )}
                 </Tabs>
             </AppBar>
 
-            {props.fileList.map((x, i) =>
-                <TabPanel key={i} value={value} index={i}>
-                    <FileHandler data={x}/>
+            {getFileHandle.map((x, i) =>
+                <TabPanel key={x.id} value={value} index={i}>
+                    <FileHandler data={x.handle}/>
                 </TabPanel>
             )}
 

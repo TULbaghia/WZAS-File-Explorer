@@ -3,15 +3,15 @@ import {Button, Grid} from "@material-ui/core";
 import {useDispatchAlertDialog, usePushDirectory} from "../../../Context/AppProvider";
 import './AppLoadDirWrapper.scss'
 
-const loadDir = (event, pushDirectory, dispatchAlert) => {
-    // noinspection JSUnresolvedFunction
-    window.showDirectoryPicker().then(value => {
-        value.requestPermission({mode: "readwrite"}).then(result => {
-            pushDirectory({name: value.name, handle: value});
-        })
-    }, () => {
+const loadDir = async (event, pushDirectory, dispatchAlert) => {
+    try {
+        // noinspection JSUnresolvedFunction
+        const picker = await window.showDirectoryPicker();
+        await picker.requestPermission({mode: "readwrite"});
+        pushDirectory({name: picker.name, handle: picker});
+    } catch (e) {
         dispatchAlert({title: "Błędny katalog", message: "Nie wybrano katalogu."});
-    });
+    }
 }
 
 export default function AppLoadDir(props) {

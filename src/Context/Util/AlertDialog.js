@@ -46,9 +46,8 @@ export default function AlertDialog(props) {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleOk} color="primary" autoFocus>
-                        OK
-                    </Button>
+                    {props.showCancel ? <Button onClick={handleClose}>Anuluj</Button> : ''}
+                    <Button onClick={handleOk} color="primary" autoFocus>OK</Button>
                 </DialogActions>
             </Dialog>
         </div>

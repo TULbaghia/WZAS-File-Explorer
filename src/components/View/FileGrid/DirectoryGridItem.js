@@ -7,9 +7,9 @@ export default function DirectoryGridItem({dirs, ...props}) {
     return (
         <>
             <Typography variant={"h4"}>Katalogi</Typography>
-            <Grid className={"mt-0"} container spacing={3} md={12}>
+            <Grid className={"mt-0"} container spacing={3}>
                 {dirs.map((item) => {
-                    return <DirectoryCard {...item}/>
+                    return <DirectoryCard key={btoa(item.name)} {...item}/>
                 })}
             </Grid>
         </>

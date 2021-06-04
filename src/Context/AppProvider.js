@@ -1,6 +1,10 @@
-import React, {createContext, useContext, useReducer} from 'react';
+import React, {createContext, useContext, useReducer, useState} from 'react';
 import {v4} from "uuid";
 import AlertDialog from "./Util/AlertDialog";
+import PromptDialog from "./Util/PromptDialog";
+import DialogContent from "@material-ui/core/DialogContent";
+import {CircularProgress} from "@material-ui/core";
+import Dialog from "@material-ui/core/Dialog";
 
 const AppContext = createContext(undefined);
 
@@ -28,7 +32,7 @@ export default function AppProvider(props) {
                 state = [...state, action.payload];
                 return state;
             case "CLOSE_FILE":
-                return state.filter(x => x.handle.name !== action.payload);
+                return state.filter(x => x.id !== action.payload.id);
             default:
                 return state;
         }
@@ -46,15 +50,26 @@ export default function AppProvider(props) {
         }
     }, []);
 
+    const [circularProgress, dispatchCircularProgress] = useState(false);
+
     const dispatcher = {
         directoryStack, dispatchDirectoryChange,
         fileHandles, dispatchFileHandle,
-        dispatchAlert
+        dispatchAlert, dispatchCircularProgress
     }
 
     return (
         <AppContext.Provider value={dispatcher}>
-            {showAlert.map((item) => <AlertDialog dispatch={dispatchAlert} key={item.id} {...item}/>)}
+            <Dialog open={circularProgress}>
+                <DialogContent style={{paddingBottom: "20px"}}>
+                    <CircularProgress/>
+                </DialogContent>
+            </Dialog>
+            {showAlert.map((item) => {
+                if (item.type === "ALERT") return <AlertDialog dispatch={dispatchAlert} key={item.id} {...item}/>;
+                if (item.type === "PROMPT") return <PromptDialog dispatch={dispatchAlert} key={item.id} {...item}/>;
+                return {item}
+            })}
             {props.children}
         </AppContext.Provider>
     );
@@ -95,12 +110,14 @@ export const useGetDirectory = () => {
 export const usePushFileHandle = () => {
     const dispatch = useContext(AppContext);
 
-    return (payload) => {
+    return ({name, handle, ...props}) => {
         dispatch.dispatchFileHandle({
-            type: "PUSH_FILE",
+            type: "ADD_FILE",
             payload: {
                 id: v4(),
-                ...payload
+                name,
+                handle,
+                ...props
             }
         });
     }
@@ -111,7 +128,7 @@ export const useCloseFileHandle = () => {
 
     return (fileId) => {
         dispatch.dispatchFileHandle({
-            type: "POP_FILE",
+            type: "CLOSE_FILE",
             payload: {
                 id: fileId
             }
@@ -122,23 +139,55 @@ export const useCloseFileHandle = () => {
 export const useGetFileHandle = () => {
     const dispatch = useContext(AppContext);
 
-    return dispatch.fileHandles;
+    return [...dispatch.fileHandles];
 }
 
 export const useDispatchAlertDialog = () => {
     const dispatch = useContext(AppContext);
 
-    return ({title, message, callbackOnOk = (() => {}), callbackOnCancel = (() => {}), ...props}) => {
+    return ({title, message, callbackOnOk = (() => {}), callbackOnCancel = (() => {}), showCancel = false, ...props}) => {
         dispatch.dispatchAlert({
             type: "ADD_ALERT",
             payload: {
                 id: v4(),
+                type: "ALERT",
                 title,
                 message,
                 callbackOnOk,
                 callbackOnCancel,
+                showCancel,
                 ...props
             }
         });
+    }
+}
+
+export const useDispatchPromptDialog = () => {
+    const dispatch = useContext(AppContext);
+
+    return ({title, message, callbackOnOk = (() => {}), callbackOnCancel = (() => {}), callbackValidator = ((i) => true), label = '', ...props}) => {
+        dispatch.dispatchAlert({
+            type: "ADD_ALERT",
+            payload: {
+                id: v4(),
+                showCancel: true,
+                type: "PROMPT",
+                title,
+                message,
+                callbackOnOk,
+                callbackOnCancel,
+                callbackValidator,
+                label,
+                ...props
+            }
+        });
+    }
+}
+
+export const useDispatchCircularProgress = () => {
+    const dispatch = useContext(AppContext);
+
+    return (enabled) => {
+        dispatch.dispatchCircularProgress(enabled);
     }
 }

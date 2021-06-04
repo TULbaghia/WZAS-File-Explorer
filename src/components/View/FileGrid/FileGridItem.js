@@ -7,9 +7,9 @@ export default function FileGridItem({files, ...props}) {
     return (
         <>
             <Typography variant={"h4"}>Pliki</Typography>
-            <Grid className={"mt-0"} container spacing={3} md={12}>
+            <Grid className={"mt-0"} container spacing={3}>
                 {files.map((item) => {
-                    return <FileCard {...item}/>
+                    return <FileCard key={btoa(item.name)} {...item}/>
                 })}
             </Grid>
         </>

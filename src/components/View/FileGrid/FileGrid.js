@@ -24,9 +24,14 @@ export default function FileGrid(props) {
     const [directoryContent, setDirectoryContent] = useState({files: [], dirs: []});
     const getDirectoryStack = useGetDirectory();
 
-    useEffect(async () => {
-        await scanDirectory([...getDirectoryStack].pop(), setDirectoryContent);
-    });
+    useEffect(() => {
+        scanDirectory([...getDirectoryStack].pop(), setDirectoryContent).then();
+        const intervalId = setInterval(() => {
+            scanDirectory([...getDirectoryStack].pop(), setDirectoryContent).then();
+        }, 1000);
+
+        return () => clearInterval(intervalId);
+    }, [getDirectoryStack]);
 
     return (
         <>

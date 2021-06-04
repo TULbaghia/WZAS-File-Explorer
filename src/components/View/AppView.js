@@ -3,6 +3,7 @@ import Grid from "@material-ui/core/Grid";
 import {Container} from "@material-ui/core";
 import AppHeader from "./AppHeader/AppHeader";
 import FileGrid from "./FileGrid/FileGrid";
+import FileView from "../FileHandler/FileView";
 
 function AppView(props) {
     return (
@@ -10,10 +11,12 @@ function AppView(props) {
             <Grid container spacing={2}>
                 <AppHeader/>
             </Grid>
-            <Grid container spacing={2} md={12}>
+            <Grid container spacing={2}>
                 <FileGrid/>
             </Grid>
-            {/*        /!*<FileView fileList={props.fileList} setFileList={props.setFileList}/>*!/*/}
+            <Grid container spacing={2}>
+                <FileView fileList={props.fileList} setFileList={props.setFileList}/>
+            </Grid>
         </Container>
     );
 }
