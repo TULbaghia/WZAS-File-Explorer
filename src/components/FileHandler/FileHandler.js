@@ -36,8 +36,8 @@ function FileHandler(props) {
         return <AudioHandler file={file} />;
       } else if (file.type === "video/mp4") {
         return <VideoHandler file={file} />;
-      } else if (file.type.match('image/*')) {
-        return <ImageHandler file={file} />
+      } else if (file.type.match("image/*")) {
+        return <ImageHandler file={file} />;
       } else {
         return <CommonHandler file={file} />;
       }
