@@ -10,7 +10,7 @@ async function MoveDirectoryController({oldDirHandle, oldDirName, newDirHandle, 
     }
 
     if (dstDir !== undefined) {
-        throw new Error("DirExists");
+        throw ("Katalog o tej nazwie już istnieje");
     }
 
     dstDir = await newDirHandle.getDirectoryHandle(newDirName, {create: true});
@@ -48,7 +48,7 @@ async function MoveFileController({oldDirHandle, oldFileName, newDirHandle, newF
     }
 
     if (newFileHandle !== undefined) {
-        throw new Error("FileExists");
+        throw ("Plik o tej nazwie już istnieje");
     }
 
     newFileHandle = await newDirHandle.getFileHandle(newFileName, {create: true});
