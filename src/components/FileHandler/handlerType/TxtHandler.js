@@ -6,8 +6,11 @@ import Button from "@material-ui/core/Button";
 import SaveIcon from "@material-ui/icons/Save";
 import CreateIcon from "@material-ui/icons/Create";
 import VisibilityIcon from "@material-ui/icons/Visibility";
-import FileSaver from "file-saver";
 import { htmlToText } from "html-to-text";
+import {
+  useGetDirectory,
+  useDispatchAlertDialog,
+} from "../../../Context/AppProvider";
 
 const useStyles = makeStyles((theme) => ({
   button: {
@@ -24,6 +27,11 @@ function TxtHandler(props) {
   const [textFromEditor, setTextFromEditor] = useState("");
   const [initialText, setInitialText] = useState({ data: "" });
   const [editMode, setEditMode] = useState(false);
+  /////////////////////////////////////////////////
+  const directoryList = useGetDirectory();
+  const directoryL = [...directoryList];
+  const dirListLast = directoryL.pop();
+  const dispatchNotification = useDispatchAlertDialog();
 
   function handleOnCLick() {
     if (document.getElementById("editor").style.visibility == "visible") {
@@ -55,12 +63,24 @@ function TxtHandler(props) {
     };
   }, []);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     let string = htmlToText(textFromEditor).toString();
     var blob = new Blob([string], {
       type: "text/plain;charset=utf-8",
     });
-    FileSaver.saveAs(blob, props.file.name);
+    var file = new File([blob], props.file.name);
+    saveFile(dirListLast.handle, props.file.name, file);
+  };
+
+  const saveFile = async (dirHandle, fileName, file) => {
+    let newFileHandle = await dirHandle.getFileHandle(fileName);
+    let newFileWritable = await newFileHandle.createWritable();
+    newFileWritable.write(file);
+    await newFileWritable.close();
+    dispatchNotification({
+      title: "Sukces",
+      message: "Plik został zapisany",
+    });
   };
 
   return (
@@ -98,7 +118,7 @@ function TxtHandler(props) {
           size="medium"
           className={classes.button}
           startIcon={<SaveIcon />}
-          onClick={handleSave}
+          onClick={() => handleSave()}
         >
           Zapisz
         </Button>
