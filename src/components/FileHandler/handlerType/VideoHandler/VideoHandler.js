@@ -56,7 +56,7 @@ function VideoHandler(props) {
     seeking: false,
   });
 
-  const { videoMap, updateMap } = useAppContext();
+  const { videoMap, updateVideoMap } = useAppContext();
 
   const [timeDisplayFormat, setTimeDisplayFormat] = useState("normal");
 
@@ -125,7 +125,7 @@ function VideoHandler(props) {
   }, [active]);
 
   const handleProgress = (changeState) => {
-    updateMap(props.fileId, playerRef.current.getCurrentTime());
+    updateVideoMap(props.fileId, playerRef.current.getCurrentTime());
 
     if (count > 0) {
       controlsRef.current.style.visibility = "hidden";
@@ -203,10 +203,6 @@ function VideoHandler(props) {
       mounted = false;
     };
   }, []);
-
-  // const setVideoTime = (time) => {
-  //   playerRef.current.seekTo(time);
-  // };
 
   const rewindVideoAtBeginning = () => {
     playerRef.current.seekTo(videoTime);

@@ -62,14 +62,28 @@ export default function AppProvider(props) {
   const [circularProgress, dispatchCircularProgress] = useState(false);
 
   const [videoMap, setVideoMap] = useState(new Map());
+  const [audioMap, setAudioMap] = useState(new Map());
+  // playlist feature
+  const [audioList, setAudioList] = useState(new Set());
 
-  useEffect(() => {
-    setVideoMap(new Map());
-  }, []);
-
-  const updateMap = (key, value) => {
+  const updateVideoMap = (key, value) => {
     videoMap.set(key, value);
     console.log(videoMap);
+  };
+
+  const updateAudioMap = (key, value) => {
+    audioMap.set(key, value);
+    console.log(audioMap);
+  };
+
+  const addToAudioList = (item) => {
+    audioList.add(item);
+    console.log(audioList);
+  };
+
+  const deleteFromAudioList = (item) => {
+    audioList.delete(item);
+    console.log(audioList);
   };
 
   const dispatcher = {
@@ -80,7 +94,12 @@ export default function AppProvider(props) {
     dispatchAlert,
     dispatchCircularProgress,
     videoMap,
-    updateMap,
+    updateVideoMap,
+    audioMap,
+    updateAudioMap,
+    audioList,
+    addToAudioList,
+    deleteFromAudioList
   };
 
   return (

@@ -4,6 +4,7 @@ import InsertDriveFileIcon from "@material-ui/icons/InsertDriveFile";
 import DeleteIcon from "@material-ui/icons/Delete";
 import CreateIcon from "@material-ui/icons/Create";
 import {
+    useAppContext,
     useCloseFileHandle,
     useDispatchAlertDialog,
     useDispatchCircularProgress,
@@ -75,19 +76,37 @@ export default function FileCard({handle, name, ...props}) {
     const dispatchPushFileHandle = usePushFileHandle();
     const dispatchCloseFileHandle = useCloseFileHandle();
 
+    const {addToAudioList, deleteFromAudioList} = useAppContext();
+
     const getCurrentDir = () => [...getDirectoryStack].pop();
 
     const openFile = async (e, dispatchAlert) => {
         const results = await filterSameList(handle, getFileHandle)
 
         if (!results.length) {
-            dispatchPushFileHandle({name, handle, getCurrentDir, directoryStack: [...getDirectoryStack]});
+            if (isAnyAudioOpened(getFileHandle) && handle.name.includes('.mp3')) {
+                console.log("Udalo sie");
+                addToAudioList({name, handle, getCurrentDir, directoryStack: [...getDirectoryStack]})
+            } else {
+                dispatchPushFileHandle({name, handle, getCurrentDir, directoryStack: [...getDirectoryStack]});
+            }
         } else {
             dispatchAlert({
                 title: "Błąd",
                 message: "Ten plik jest już uruchomiony"
             })
         }
+    }
+
+    const isAnyAudioOpened = (fileHandle) => {
+        let isAnyAudioOpened = false;
+        let list = Array.from(fileHandle);
+        list.forEach(x => {
+            if (x.handle.name.includes(".mp3")) {
+                isAnyAudioOpened = true;
+            }
+        })
+        return isAnyAudioOpened;
     }
 
     const onDeleteButton = async (e) => {
