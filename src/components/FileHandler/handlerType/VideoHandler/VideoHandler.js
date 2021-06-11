@@ -5,6 +5,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import VideoControls from "./VideoControls";
 import screenfull from "screenfull";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
+import { useAppContext } from "../../../../Context/AppProvider";
 
 const useStyles = makeStyles({
   playerWrapper: {
@@ -55,10 +56,13 @@ function VideoHandler(props) {
     seeking: false,
   });
 
+  const { videoMap, updateMap } = useAppContext();
+
   const [timeDisplayFormat, setTimeDisplayFormat] = useState("normal");
 
   const [active, setActive] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [videoTime, setVideoTime] = useState(0);
 
   const { playing, muted, volume, playbackRate, played, seeking } = state;
 
@@ -121,7 +125,7 @@ function VideoHandler(props) {
   }, [active]);
 
   const handleProgress = (changeState) => {
-    console.log(changeState);
+    updateMap(props.fileId, playerRef.current.getCurrentTime());
 
     if (count > 0) {
       controlsRef.current.style.visibility = "hidden";
@@ -191,10 +195,23 @@ function VideoHandler(props) {
     };
     fileReader.readAsDataURL(props.file);
 
+    if (videoMap.has(props.fileId)) {
+      setVideoTime(videoMap.get(props.fileId));
+    }
+
     return function cleanup() {
       mounted = false;
     };
   }, []);
+
+  // const setVideoTime = (time) => {
+  //   playerRef.current.seekTo(time);
+  // };
+
+  const rewindVideoAtBeginning = () => {
+    playerRef.current.seekTo(videoTime);
+    setLoading(true);
+  };
 
   return (
     <Container maxWidth="md">
@@ -211,13 +228,19 @@ function VideoHandler(props) {
           url={dataUrl.data}
           muted={muted}
           playing={playing}
+          onStart={rewindVideoAtBeginning}
           volume={volume}
           playbackRate={playbackRate}
           onProgress={handleProgress}
           stopOnUnmount={false}
-          light="https://parafiamanchester.pl/wp-content/uploads/2021/04/5852396-film-reels-png-banner-library-library-movie-reel-transparent-film-reel-transparent-820_414_preview.png.jpeg"
+          light={
+            videoTime === 0
+              ? "https://parafiamanchester.pl/wp-content/uploads/2021/04/5852396-film-reels-png-banner-library-library-movie-reel-transparent-film-reel-transparent-820_414_preview.png.jpeg"
+              : false
+          }
           playIcon={
             <PlayArrowIcon
+              id={"playMe"}
               style={{
                 color: "white",
                 fontSize: 100,
