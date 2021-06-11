@@ -28,9 +28,7 @@ function FileHandler(props) {
 
   const renderFile = () => {
     if (file.type || file.type === "") {
-      if (file.type === "" && file.name.endsWith(".pptx")) {
-        return "PPTX";
-      } else if (file.type === "text/plain") {
+      if (file.type === "text/plain") {
         return <TxtHandler file={file} />;
       } else if (file.type === "audio/mpeg") {
         return <AudioHandler file={file} />;
