@@ -13,6 +13,16 @@ import {filterSameList, moveFile} from "../FileGrid/Card/FileCard";
 import {filterSameDirs, moveDirectory} from "../FileGrid/Card/DirectoryCard";
 import {CreateNewFolder, NoteAdd} from "@material-ui/icons";
 import AssignmentReturnIcon from '@material-ui/icons/AssignmentReturn';
+import FiberManualRecordTwoToneIcon from "@material-ui/icons/FiberManualRecordTwoTone";
+import PauseCircleFilledTwoToneIcon from "@material-ui/icons/PauseCircleFilledTwoTone";
+import VideocamIcon from "@material-ui/icons/Videocam";
+import VideocamOffIcon from "@material-ui/icons/VideocamOff";
+import {
+    startCamera,
+    startCapture,
+    stopCamera,
+    stopCapture
+} from "../../FileHandler/ScreenCapture/ScreenCapture";
 
 const colorCrimson = {
     color: "crimson"
@@ -155,6 +165,18 @@ export default function AppHeader(props) {
                 <Button onClick={popDirectory}><AssignmentReturnIcon/></Button>
                 <Button onClick={() => promptCreate("FILE")}><NoteAdd/></Button>
                 <Button onClick={() => promptCreate("DIR")}><CreateNewFolder/></Button>
+                <Button style={{display: ""}} onClick={() => {startCamera()}} id={"startCameraCapture"} hidden={false}>
+                    <VideocamIcon/>
+                </Button>
+                <Button style={{display: "none"}} onClick={() => {stopCamera();}} id={"stopCameraCapture"} hidden={true}>
+                    <VideocamOffIcon fontSize={"inherit"}/>
+                </Button>
+                <Button style={{display: ""}} onClick={() => {startCapture();}} id={"startScreenCapture"}>
+                    <FiberManualRecordTwoToneIcon/>
+                </Button>
+                <Button style={{display: "none"}} onClick={() => {stopCapture();}} id={"stopScreenCapture"} >
+                    <PauseCircleFilledTwoToneIcon/>
+                </Button>
             </Grid>
         </>
     );

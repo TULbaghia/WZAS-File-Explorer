@@ -1,16 +1,11 @@
 import React from 'react';
-import FiberManualRecordTwoToneIcon from '@material-ui/icons/FiberManualRecordTwoTone';
-import PauseCircleFilledTwoToneIcon from '@material-ui/icons/PauseCircleFilledTwoTone';
-import VideocamIcon from '@material-ui/icons/Videocam';
-import VideocamOffIcon from '@material-ui/icons/VideocamOff';
+import {useDispatchPromptDialog} from "../../../Context/AppProvider";
 
 var mediaRecorder;
 var videoStream;
 var audioStream;
 var cameraStream;
 var blobs = [];
-var video;
-var canvas;
 
 const displayMediaOptions = {
     video: {
@@ -29,7 +24,7 @@ const cameraConstraints = {
     }
 };
 
-async function startCapture() {
+export async function startCapture() {
     videoStream = await navigator.mediaDevices.getDisplayMedia(displayMediaOptions)
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         audioStream = await navigator.mediaDevices.getUserMedia(
@@ -49,11 +44,11 @@ async function startCapture() {
         blobs.push(e.data);
     }
     mediaRecorder.start();
-    document.getElementById("stopScreenCapture").hidden = false;
-    document.getElementById("startScreenCapture").hidden = true;
+    document.getElementById("stopScreenCapture").style.display = "";
+    document.getElementById("startScreenCapture").style.display = "none";
 }
 
-async function startCamera() {
+export async function startCamera() {
     cameraStream = await navigator.mediaDevices.getUserMedia(cameraConstraints);
 
     let video = document.getElementById('camera');
@@ -71,23 +66,23 @@ async function startCamera() {
                 track.stop();
             });
 
-            document.getElementById("startCameraCapture").hidden = false;
-            document.getElementById("stopCameraCapture").hidden = true;
+            document.getElementById("startCameraCapture").style.display = "";
+            document.getElementById("stopCameraCapture").style.display = "none";
         };
     }
 
-    document.getElementById("startCameraCapture").hidden = true;
-    document.getElementById("stopCameraCapture").hidden = false;
+    document.getElementById("startCameraCapture").style.display = "none";
+    document.getElementById("stopCameraCapture").style.display = "";
 }
 
-function stopCamera() {
+export function stopCamera() {
     cameraStream.getTracks().forEach(function (track) {
         track.stop();
     });
 
     document.exitPictureInPicture();
-    document.getElementById("startCameraCapture").hidden = false;
-    document.getElementById("stopCameraCapture").hidden = true;
+    document.getElementById("startCameraCapture").style.display = "";
+    document.getElementById("stopCameraCapture").style.display = "none";
 }
 
 const mergeAudioStreams = (desktopStream, voiceStream) => {
@@ -109,19 +104,13 @@ const mergeAudioStreams = (desktopStream, voiceStream) => {
     return destination.stream.getAudioTracks();
 };
 
-function stopCapture() {
+export function stopCapture() {
     mediaRecorder.stop();
-    mediaRecorder.onstop = function () {
-        const clipName = prompt('Wybierz nazwę pliku');
+    mediaRecorder.onstop = async function () {
 
         const blob = new Blob(blobs, {type: 'video/webm'});
+        await saveFile(blob);
         blobs = [];
-        const videoURL = window.URL.createObjectURL(blob);
-
-        const link = document.createElement("a");
-        link.href = videoURL;
-        link.download = clipName;
-        link.click();
         videoStream.getTracks().forEach(function (track) {
             track.stop()
         })
@@ -129,44 +118,31 @@ function stopCapture() {
             track.stop()
         })
     }
-    document.getElementById("startScreenCapture").hidden = false;
-    document.getElementById("stopScreenCapture").hidden = true;
+    document.getElementById("startScreenCapture").style.display = "";
+    document.getElementById("stopScreenCapture").style.display = "none";
 }
 
-function ScreenCapture() {
+async function saveFile(blob: Blob) {
+    const opts = {
+        types: [{
+            description: 'Video file',
+            accept: {'video/webm': ['.webm']},
+        }],
+    };
+    const newHandle = await window.showSaveFilePicker(opts);
+    const writableStream = await newHandle.createWritable();
+    await writableStream.write(blob);
+    await writableStream.close();
+}
+
+let dispatchPrompt = undefined;
+
+export default function ScreenCapture() {
+    dispatchPrompt = useDispatchPromptDialog();
+
     return (
         <div>
-            <p id={"startScreenCapture"} hidden={false} style={{fontSize: "xxx-large"}}>
-                <FiberManualRecordTwoToneIcon fontSize={"inherit"}
-                                              style={{position: "absolute", right: "10px", top: "10px"}}
-                                              onClick={() => {
-                                                  startCapture();
-                                              }}/>
-            </p>
-            <p id={"stopScreenCapture"} hidden={true} style={{fontSize: "xxx-large"}}>
-                <PauseCircleFilledTwoToneIcon fontSize={"inherit"}
-                                              style={{position: "absolute", right: "10px", top: "10px"}}
-                                              onClick={() => {
-                                                  stopCapture();
-                                              }}/>
-            </p>
-            <p id={"startCameraCapture"} hidden={false} style={{fontSize: "xxx-large"}}>
-                <VideocamIcon fontSize={"inherit"}
-                              style={{position: "absolute", right: "60px", top: "10px"}}
-                              onClick={() => {
-                                  startCamera()
-                              }}/>
-            </p>
-            <p id={"stopCameraCapture"} hidden={true} style={{fontSize: "xxx-large"}}>
-                <VideocamOffIcon fontSize={"inherit"}
-                                 style={{position: "absolute", right: "60px", top: "10px"}}
-                                 onClick={() => {
-                                     stopCamera();
-                                 }}/>
-            </p>
             <video id="camera" height={0} width={0}/>
         </div>
     );
 }
-
-export default ScreenCapture;
