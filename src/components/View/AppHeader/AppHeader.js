@@ -17,7 +17,7 @@ import FiberManualRecordTwoToneIcon from "@material-ui/icons/FiberManualRecordTw
 import PauseCircleFilledTwoToneIcon from "@material-ui/icons/PauseCircleFilledTwoTone";
 import VideocamIcon from "@material-ui/icons/Videocam";
 import VideocamOffIcon from "@material-ui/icons/VideocamOff";
-import ScreenCapture, {
+import {
     startCamera,
     startCapture,
     stopCamera,

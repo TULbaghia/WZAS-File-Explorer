@@ -1,12 +1,11 @@
 import React from 'react';
+import {useDispatchPromptDialog, useGetDirectory} from "../../../Context/AppProvider";
 
 var mediaRecorder;
 var videoStream;
 var audioStream;
 var cameraStream;
 var blobs = [];
-var video;
-var canvas;
 
 const displayMediaOptions = {
     video: {
@@ -107,17 +106,11 @@ const mergeAudioStreams = (desktopStream, voiceStream) => {
 
 export function stopCapture() {
     mediaRecorder.stop();
-    mediaRecorder.onstop = function () {
-        const clipName = prompt('Wybierz nazwę pliku');
+    mediaRecorder.onstop = async function () {
 
         const blob = new Blob(blobs, {type: 'video/webm'});
+        await saveFile(blob);
         blobs = [];
-        const videoURL = window.URL.createObjectURL(blob);
-
-        const link = document.createElement("a");
-        link.href = videoURL;
-        link.download = clipName;
-        link.click();
         videoStream.getTracks().forEach(function (track) {
             track.stop()
         })
@@ -129,13 +122,28 @@ export function stopCapture() {
     document.getElementById("stopScreenCapture").style.display = "none";
 }
 
-export function ScreenCapture() {
+async function saveFile(blob: Blob) {
+    const opts = {
+        types: [{
+            description: 'Video file',
+            accept: {'video/webm': ['.webm']},
+        }],
+    };
+    const newHandle = await window.showSaveFilePicker(opts);
+    const writableStream = await newHandle.createWritable();
+    await writableStream.write(blob);
+    await writableStream.close();
+}
+
+let dispatchPrompt = undefined;
+let dirListLast = undefined;
+
+export default function ScreenCapture() {
+    dispatchPrompt = useDispatchPromptDialog();
+
     return (
         <div>
-
             <video id="camera" height={0} width={0}/>
         </div>
     );
 }
-
-export default ScreenCapture;
