@@ -1,5 +1,5 @@
 import React from 'react';
-import {useDispatchPromptDialog, useGetDirectory} from "../../../Context/AppProvider";
+import {useDispatchPromptDialog} from "../../../Context/AppProvider";
 
 var mediaRecorder;
 var videoStream;
@@ -136,7 +136,6 @@ async function saveFile(blob: Blob) {
 }
 
 let dispatchPrompt = undefined;
-let dirListLast = undefined;
 
 export default function ScreenCapture() {
     dispatchPrompt = useDispatchPromptDialog();
