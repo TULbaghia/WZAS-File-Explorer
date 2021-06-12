@@ -111,7 +111,7 @@ function VideoHandler(props) {
   };
 
   const togglePIP = () => {
-    let player = document.getElementsByTagName("VIDEO")[0];
+    let player = document.getElementById("video").getElementsByTagName("VIDEO")[0];
     if (player !== undefined && player.readyState === 4) {
       if (document.pictureInPictureElement && !active) {
         document.exitPictureInPicture();
