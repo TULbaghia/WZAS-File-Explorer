@@ -31,7 +31,6 @@ export const filterSameDirs = async (dirHandle, fileHandle) => {
         await x.handle.isSameEntry(dirHandle).then((b) => result = b);
         return result;
     })
-    debugger;
     return results;
 }
 
@@ -132,41 +131,43 @@ export default function DirectoryCard({handle, name, ...props}) {
     const onDrop = async (e) => {
         const droppableFile = window.draggable;
         window.draggable = null;
-        const isSame = await droppableFile.handle.isSameEntry(handle);
-        const openFiles = await filterSameList(droppableFile.handle, getFileHandle);
-        const usedDirs = await filterSameDirs(droppableFile.handle, getFileHandle);
-        if (!isSame && openFiles.length === 0 && usedDirs.length === 0) {
-            dispatchAlert({
-                title: "Przeniesienie katalogu",
-                message: (
-                    <>Nastąpi przeniesienie:<br/>
-                        <small style={colorCrimson}>{droppableFile.name}</small><br/>
-                        do katalogu <br/>
-                        <small style={colorCrimson}>{name}</small><br/>
-                        <small>Zmiana przeniesienie polega na utworzeniu kopii, może to chwilę potrwać</small></>
-                ),
-                callbackOnOk: () => {
-                    try {
-                        if (droppableFile.type === "DIR")
-                            moveDirectory(getCurrentDir(), droppableFile.name, {handle}, droppableFile.name, dispatchAlert, dispatchProgress).then();
-                        if (droppableFile.type === "FILE")
-                            moveFile(getCurrentDir(), droppableFile.name, {handle}, droppableFile.name, dispatchAlert, dispatchProgress).then();
-                    } catch (e) {
-                        dispatchAlert({title: "Błąd", message: e});
-                    }
-                },
-                showCancel: true,
-            });
-        } else if (openFiles.length !== 0){
-            dispatchAlert({
-                title: "Błąd",
-                message: "Zamknij plik przed przeniesieniem do innej lokalizacji",
-            });
-        } else if (usedDirs.length !== 0){
-            dispatchAlert({
-                title: "Błąd",
-                message: "Zamknij plik w przenoszonym katalogu",
-            });
+        if (droppableFile != null && droppableFile.handle != null) {
+            const isSame = await droppableFile.handle.isSameEntry(handle);
+            const openFiles = await filterSameList(droppableFile.handle, getFileHandle);
+            const usedDirs = await filterSameDirs(droppableFile.handle, getFileHandle);
+            if (!isSame && openFiles.length === 0 && usedDirs.length === 0) {
+                dispatchAlert({
+                    title: "Przeniesienie katalogu",
+                    message: (
+                        <>Nastąpi przeniesienie:<br/>
+                            <small style={colorCrimson}>{droppableFile.name}</small><br/>
+                            do katalogu <br/>
+                            <small style={colorCrimson}>{name}</small><br/>
+                            <small>Zmiana przeniesienie polega na utworzeniu kopii, może to chwilę potrwać</small></>
+                    ),
+                    callbackOnOk: () => {
+                        try {
+                            if (droppableFile.type === "DIR")
+                                moveDirectory(getCurrentDir(), droppableFile.name, {handle}, droppableFile.name, dispatchAlert, dispatchProgress).then();
+                            if (droppableFile.type === "FILE")
+                                moveFile(getCurrentDir(), droppableFile.name, {handle}, droppableFile.name, dispatchAlert, dispatchProgress).then();
+                        } catch (e) {
+                            dispatchAlert({title: "Błąd", message: e});
+                        }
+                    },
+                    showCancel: true,
+                });
+            } else if (openFiles.length !== 0) {
+                dispatchAlert({
+                    title: "Błąd",
+                    message: "Zamknij plik przed przeniesieniem do innej lokalizacji",
+                });
+            } else if (usedDirs.length !== 0) {
+                dispatchAlert({
+                    title: "Błąd",
+                    message: "Zamknij plik w przenoszonym katalogu",
+                });
+            }
         }
     }
 
