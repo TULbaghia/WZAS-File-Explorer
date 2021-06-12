@@ -33,11 +33,11 @@ function FileHandler(props) {
       } else if (file.type === "text/plain") {
         return <TxtHandler file={file} />;
       } else if (file.type === "audio/mpeg") {
-        return <AudioHandler file={file} />;
+        return <AudioHandler file={file} fileId={props.fileId} />;
       } else if (file.type === "video/mp4") {
-        return <VideoHandler file={file} />;
-      } else if (file.type.match('image/*')) {
-        return <ImageHandler file={file} />
+        return <VideoHandler file={file} fileId={props.fileId} />;
+      } else if (file.type.match("image/*")) {
+        return <ImageHandler file={file} />;
       } else {
         return <CommonHandler file={file} />;
       }

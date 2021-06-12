@@ -4,6 +4,8 @@ import ReactPlayer from "react-player";
 import { makeStyles } from "@material-ui/core/styles";
 import VideoControls from "./VideoControls";
 import screenfull from "screenfull";
+import PlayArrowIcon from "@material-ui/icons/PlayArrow";
+import { useAppContext } from "../../../../Context/AppProvider";
 
 const useStyles = makeStyles({
   playerWrapper: {
@@ -30,21 +32,37 @@ const format = (seconds) => {
 
 let count = 0;
 
+function formatBytes(a, b = 2) {
+  if (0 === a) return "0 Bytes";
+  const c = 0 > b ? 0 : b,
+    d = Math.floor(Math.log(a) / Math.log(1024));
+  return (
+    parseFloat((a / Math.pow(1024, d)).toFixed(c)) +
+    " " +
+    ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"][d]
+  );
+}
+
 function VideoHandler(props) {
   const classes = useStyles();
   const [dataUrl, setDataUrl] = useState({ data: "" });
+  const [fileSize, setFileSize] = useState(props.file.size);
   const [state, setState] = useState({
     playing: true,
-    muted: true,
+    muted: false,
     volume: 0.5,
     playbackRate: 1.0,
     played: 0,
     seeking: false,
   });
 
+  const { videoMap, updateVideoMap } = useAppContext();
+
   const [timeDisplayFormat, setTimeDisplayFormat] = useState("normal");
 
   const [active, setActive] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [videoTime, setVideoTime] = useState(0);
 
   const { playing, muted, volume, playbackRate, played, seeking } = state;
 
@@ -107,7 +125,7 @@ function VideoHandler(props) {
   }, [active]);
 
   const handleProgress = (changeState) => {
-    console.log(changeState);
+    updateVideoMap(props.fileId, playerRef.current.getCurrentTime());
 
     if (count > 0) {
       controlsRef.current.style.visibility = "hidden";
@@ -143,8 +161,10 @@ function VideoHandler(props) {
   };
 
   const handleMouseMove = () => {
-    controlsRef.current.style.visibility = "visible";
-    count = 0;
+    if (controlsRef.current) {
+      controlsRef.current.style.visibility = "visible";
+      count = 0;
+    }
   };
 
   const currentTime = playerRef.current
@@ -175,10 +195,19 @@ function VideoHandler(props) {
     };
     fileReader.readAsDataURL(props.file);
 
+    if (videoMap.has(props.fileId)) {
+      setVideoTime(videoMap.get(props.fileId));
+    }
+
     return function cleanup() {
       mounted = false;
     };
   }, []);
+
+  const rewindVideoAtBeginning = () => {
+    playerRef.current.seekTo(videoTime);
+    setLoading(true);
+  };
 
   return (
     <Container maxWidth="md">
@@ -195,34 +224,76 @@ function VideoHandler(props) {
           url={dataUrl.data}
           muted={muted}
           playing={playing}
+          onStart={rewindVideoAtBeginning}
           volume={volume}
           playbackRate={playbackRate}
           onProgress={handleProgress}
+          stopOnUnmount={false}
+          light={
+            videoTime === 0
+              ? "https://parafiamanchester.pl/wp-content/uploads/2021/04/5852396-film-reels-png-banner-library-library-movie-reel-transparent-film-reel-transparent-820_414_preview.png.jpeg"
+              : false
+          }
+          playIcon={
+            <PlayArrowIcon
+              id={"playMe"}
+              style={{
+                color: "white",
+                fontSize: 100,
+                border: "5px solid black",
+                borderRadius: 25,
+                backgroundColor: "black",
+                opacity: 0.85,
+              }}
+              onClick={(e) => {
+                if (fileSize > 50000000) {
+                  if (
+                    window.confirm(
+                      "Rozmiar pliku wynosi: " +
+                        formatBytes(fileSize) +
+                        ". Jego odtworzenie może spowolnić działanie aplikacji. Czy jesteś pewny?"
+                    )
+                  ) {
+                    setLoading(true);
+                  } else {
+                    e.stopPropagation();
+                  }
+                } else {
+                  setLoading(true);
+                }
+                console.log(fileSize);
+              }}
+            ></PlayArrowIcon>
+          }
         />
-        <VideoControls
-          ref={controlsRef}
-          fileName={props.file.name}
-          onPlayPause={handlePlayPause}
-          playing={playing}
-          onRewind={handleRewind}
-          onFastForward={handleFastForward}
-          muted={muted}
-          onMute={handleMute}
-          onVolumeChange={handleVolumeChange}
-          onVolumeSeekUp={handleVolumeSeekUp}
-          volume={volume}
-          playbackRate={playbackRate}
-          onPlaybackRateChange={handlePlaybackRateChange}
-          onToggleFullScreen={toggleFullScreen}
-          onTogglePictureInPicture={togglePIP}
-          played={played}
-          onSeek={handleSeekChange}
-          onSeekMouseDown={handleSeekMouseDown}
-          onSeekMouseUp={handleSeekMouseUp}
-          elapsedTime={elapsedTime}
-          totalDuration={totalDuration}
-          onChangeDisplayFormat={handleChangeDisplayFormat}
-        />
+        {loading ? (
+          <VideoControls
+            ref={controlsRef}
+            fileName={props.file.name}
+            onPlayPause={handlePlayPause}
+            playing={playing}
+            onRewind={handleRewind}
+            onFastForward={handleFastForward}
+            muted={muted}
+            onMute={handleMute}
+            onVolumeChange={handleVolumeChange}
+            onVolumeSeekUp={handleVolumeSeekUp}
+            volume={volume}
+            playbackRate={playbackRate}
+            onPlaybackRateChange={handlePlaybackRateChange}
+            onToggleFullScreen={toggleFullScreen}
+            onTogglePictureInPicture={togglePIP}
+            played={played}
+            onSeek={handleSeekChange}
+            onSeekMouseDown={handleSeekMouseDown}
+            onSeekMouseUp={handleSeekMouseUp}
+            elapsedTime={elapsedTime}
+            totalDuration={totalDuration}
+            onChangeDisplayFormat={handleChangeDisplayFormat}
+          />
+        ) : (
+          <div></div>
+        )}
       </div>
     </Container>
   );
