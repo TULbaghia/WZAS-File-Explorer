@@ -27,9 +27,14 @@ Aplikacja może nie działać we wszystkich przeglądarkach - zapewniono wsparci
 
 ## Autorzy:
 
-- [Michał Maksajda](https://github.com/adjaskam)(lider)
-- [Paweł Guzek](https://github.com/pguzek1)
-- [Dominik Kasierski](https://github.com/DominikKasierski)
-- [Artur Madaj](https://github.com/Arturro99)
-- [Wojciech Sowa](https://github.com/WojciechSova)
-- [Krzysztof Szcześniak](https://github.com/k-szczesniak)
+#### [Michał Maksajda](https://github.com/adjaskam) (lider) & [Paweł Guzek](https://github.com/pguzek1)
+  - Moduł obsługi plików / katalogów (File System Access API)
+  - Przenoszenie plików / katalogów (Drag-and-Drop API)
+
+#### [Dominik Kasierski](https://github.com/DominikKasierski) & [Krzysztof Szcześniak](https://github.com/k-szczesniak)
+  - Obsługa plików wideo / audio / kolejki odtwarzania
+  - Picture In Picture API
+
+#### [Artur Madaj](https://github.com/Arturro99) & [Wojciech Sowa](https://github.com/WojciechSova)
+  - Nagrywanie obrazu z kamery oraz dźwięku z mikrofonu (Media Capture and Streams API)
+  - Nagrywanie obrazu oraz dźwięku z pulpitu (Screen Capture API)
