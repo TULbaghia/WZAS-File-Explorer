@@ -1,29 +1,27 @@
-# Praktyczne wykorzystanie Web APIs w interakcji z użytkownikiem
+# WZAS- Praktyczne wykorzystanie Web APIs w interakcji z użytkownikiem
 
-Projekt realizowany w ramach przedmiotu 'Wybrane zagadnienia aplikacji sieciowych'.
+Aplikacja umożliwia klientom wykonywać podstawowe akcji (przenieś, kopiuj, zmień nazwę, usuń, podgląd/edycja pliktów) na katalogach do których przyznano uprawnienia.
+Dzięki zastosowaniu File System Access API, aplikacja działa w trybie klienckim, 
+użytkownicy przyznają przeglądarce oprawnienia (ro, rw) do katalogów we własnym systemie (nie serwerze).  
+Pliki użytkownika nie są przechowywane na serwerze.
+
+&nbsp;
+
+Zastosowanie niektórych z wykorzystanych API wymaga korzystania z **protokołu https**.  
+
+Ze względu na konieczność wykorzystania **eksperymentalnych wersji WebAPIs** (brak implementacji w części przegląderek) 
+sprawdzono poprawność działania **Edge/91** oraz **Chromium/96.0.4664.93**.
 
 ## Uruchomienie projektu
 
-#
+Pobranie zależności: `yarn install`
 
-W celu zaciągnięcia wymaganych zależności:
-
-### `npm install`
-
-#
-
-W celu uruchomienia serwera:
-
-### `npm start`
-
-#
+Uruchomienie aplikacji: `yarn start`
 
 Aplikacja dostępna pod adresem:\
-[http://localhost:3000](http://localhost:3000)
+[https://localhost:3000](https://localhost:3000)
 
-Aplikacja może nie działać we wszystkich przeglądarkach - zapewniono wsparcie dla Edge/91
 
-#
 
 ## Autorzy:
 
@@ -38,3 +36,10 @@ Aplikacja może nie działać we wszystkich przeglądarkach - zapewniono wsparci
 #### [Artur Madaj](https://github.com/Arturro99) & [Wojciech Sowa](https://github.com/WojciechSova)
   - Nagrywanie obrazu z kamery oraz dźwięku z mikrofonu (Media Capture and Streams API)
   - Nagrywanie obrazu oraz dźwięku z pulpitu (Screen Capture API)
+
+## Zrzuty ekranu działającej aplikacji
+
+![Image01](https://github.com/TULbaghia/WZAS-File-Explorer/raw/master/.git_img/img01.png)
+![Image02](https://github.com/TULbaghia/WZAS-File-Explorer/raw/master/.git_img/img02.png)
+![Image03](https://github.com/TULbaghia/WZAS-File-Explorer/raw/master/.git_img/img03.png)
+![Image04](https://github.com/TULbaghia/WZAS-File-Explorer/raw/master/.git_img/img04.png)
