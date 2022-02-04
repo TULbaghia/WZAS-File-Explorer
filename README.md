@@ -1,4 +1,4 @@
-# WZAS- Praktyczne wykorzystanie Web APIs w interakcji z użytkownikiem
+# WZAS - Praktyczne wykorzystanie Web APIs w interakcji z użytkownikiem
 
 Aplikacja umożliwia klientom wykonywać podstawowe akcji (przenieś, kopiuj, zmień nazwę, usuń, podgląd/edycja plików) na katalogach do których przyznano uprawnienia.
 Dzięki zastosowaniu File System Access API, aplikacja działa w trybie klienckim, 
